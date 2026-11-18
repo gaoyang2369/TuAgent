@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=70.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tuagent"
+version = "0.2.0"
+description = "An asynchronous agent core with pluggable models and tools"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2,<3"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["tuagent", "tuagent.*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+tuagent = ["py.typed"]
