@@ -4,10 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tuagent"
-version = "0.2.1"
+version = "0.3.0"
 description = "An asynchronous agent core with pluggable models and tools"
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2,<3"]
+
+[project.optional-dependencies]
+chat-completions = ["openai>=2,<3"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -126,6 +126,19 @@ TuAgent/
 - 检查第二次实际发出的请求载有完整助手调用和配对的工具消息，模型回复包含测试函数运行时产生的值。记录所用模型和请求次数。
 - 从干净环境安装构建的 wheel，运行公共 API 冒烟测试和全部离线测试。基础安装可独立运行 M1、M2，模型 SDK 通过适配器的可选依赖安装。
 
+**M3 已完成（2026-11-19，`tuagent` 0.3.0）**
+
+- DeepSeek `deepseek-flash`（非思考模式）的 3 次请求均返回 HTTP 200。直接回答发起 1 次请求，返回 `TUAGENT_DIRECT_OK`。
+- 工具往返发起 2 次请求，handler 执行 1 次。第二次请求携带原始助手调用和同 ID 的工具结果。最终回答与工具在运行时生成的 `tuagent-proof-904ae3d2c979472e83a79d2201843334` 完全一致。
+- 在干净的 Python 3.11 环境安装 wheel 后，基础安装通过 27 项 M1、M2 测试。安装 `chat-completions` 可选依赖后，32 项离线测试全部通过。
+
+调用方从 `tuagent.providers` 导入 `ChatCompletionsProvider`，传入模型名以及已配置端点和认证的 `AsyncOpenAI` 客户端。复验 DeepSeek 时，脚本从 `TUAGENT_API_KEY` 环境变量或项目根目录的 `.env.local` 读取密钥。
+
+```powershell
+python -m pip install ".[chat-completions]"
+python tests/live_chat_completions.py --model deepseek-flash --base-url https://api.deepseek.com --deepseek-non-thinking
+```
+
 **核心完成条件**为 M1、M2 的公共接口测试通过，且构建的 wheel 能在干净环境中安装并运行这些测试。**模型适配完成条件**为 M3 的协议样本和真实端点验收通过，可在选定模型服务后单独交付。
 
 ## 6. 后续扩展
