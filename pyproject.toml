@@ -11,6 +11,7 @@ dependencies = ["pydantic>=2,<3"]
 
 [project.optional-dependencies]
 chat-completions = ["openai>=2,<3"]
+mysql = ["PyMySQL[rsa]>=1.1.1,<2"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
