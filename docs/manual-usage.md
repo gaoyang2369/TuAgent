@@ -55,9 +55,9 @@ async def ask_manual(provider):
 - `hybrid_concepts` 先过滤适用手册，再融合关键词与本地中英领域概念。概念表把同义表达归到同一特征，并把减速与能量回馈作为相关特征参与排序。该路径可全程离线运行，覆盖概念由代码内的词表确定。用 `register_manual_tools(..., semantic=False)` 可关闭概念路径，结果标为 `keyword_only`。
 - `search_manual` 每次最多返回 8 个短摘录，带条目、章节、实际 PDF 页、版次、源文件哈希和可打开链接。证据不足时返回 `no_results`。代码释义的起页可与原因和核查段落的页分开，跨页片段的链接各指向其所在页。
 
-## 后续向量评测的可选 Ollama 后端
+## 向量检索的可选 Ollama 后端
 
-向量评测可以复用部署在另一台内网服务器上的 Ollama 服务。TuAgent 通过 HTTP 访问该服务器。下一阶段接入时使用以下环境变量，目前手册工具仍使用已验收的规则检索。[Ollama 模型说明](https://ollama.com/library/qwen3-embedding:8b)
+向量检索可以复用内网 Ollama 服务。默认使用本地规则，需要向量模式时配置以下环境变量，并按评测记录构建缓存。[建库与评测命令](manual-retrieval-eval.md) · [Ollama 模型说明](https://ollama.com/library/qwen3-embedding:8b)
 
 ```dotenv
 OLLAMA_BASE_URL=http://10.108.13.254:11434
@@ -86,3 +86,29 @@ EMBEDDING_MODEL=qwen3-embedding:8b
 F30002 的原因和核查摘录均逐字落在原 PDF 第 905 页 F30003 标题之前。限定 F30002 搜索欠压返回 `no_results`。无代码的中文减速过压问题使用 `hybrid_concepts`，首条命中 F30002 第 905 页的原因段。番茄浓汤问题无命中。关闭概念路径后，英文回馈关键词仍命中第 905 页，模式为 `keyword_only`。
 
 G120_SIM 对应的实际控制单元和固件仍待确认。真实手册验收覆盖 02/2023 英文版。多版逻辑使用合成版次复测，其他真实版次、语言和扫描件尚无验收样本。
+
+## 向量增强前的代码复核
+
+本次复核以 `79696befd298ba85af71371363c596472fb7e3ae` 为规则基线。全量离线测试 52 项通过，手册模块及测试的 Ruff 检查通过。真实手册脚本退出码为 0，`Agent.run` 经脚本模型完成 14 次工具调用。另用 Poppler 独立提取原 PDF 第 819–936 页，对照 SQLite，352 个 F/A 条目代码和起始页逐项相符。四个目标代码的原因页及 `F30002` 第 905 页的跨页引用通过原文核验。
+
+### 经公共工具复现的行为
+
+使用 `ToolExecutor.execute` 调用 `search_manual`，统一传入 `device_series="G120"`、`limit=5`，检索模式为当前默认的 `hybrid_concepts`。下列问法和近似改写已在开发中可见，后续归入开发集或回归用例。
+
+| 输入 | 当前实测 | 对下一阶段的影响 |
+|---|---|---|
+| “减速时母线电压升高，手册列了哪些可能原因” | 第一条为 `F30002 / cause / 905` | 保留已命中的术语问法作为对照。 |
+| “刹车时直流侧电压往上窜，手册列了哪些原因？” | `no_results`，没有候选证据 | 期望仍为 `F30002 / cause / 905`，可验证向量召回能否补回相同证据。 |
+| “F99999 母线电压升高，是什么原因？” | 未传 `code` 时第一条为 `F30002 / cause / 905`。单独传 `code="F99999"` 查询相同现象则是 `no_results` | 自由文本中的未知码可能串到另一个代码，应统一显式代码的处理。 |
+| `code="F30002"`，问“如何排查” | `no_results`。换成“核查”可找到第 905 页的 `remedy` | “如何排查”已列于短问白名单，但前一步的意图表达式未识别“排查”。 |
+| “母线电压升高会影响食堂菜单的价格吗？” | 返回 `ok`，第一条为 `F30002 / title / 904` | 只匹配术语亦可误答。无答案测试应含领域词重合、但手册无法回答的问题。 |
+
+### 检索实现影响评测的三处细节
+
+- `index.candidates` 用词项倒排表生成候选，并将段落类型限定为 `title`、`cause`、`remedy`、`diagnostic_value`、`cross_reference`。索引共有 2,436 段，其中 1,380 段属于这五类。向量分支应从相同适用范围独立取候选，才能找回倒排表漏掉的段落。若新增可检索类型，应另行评估语料扩容的收益。[候选查询](../src/tuagent/manual/index.py)
+- `SearchPlan` 的 `semantic=True` 启用的是手写双语概念、相关词与意图规则。`rank` 将问题中的代码作为加分项，结构化 `code` 参数才参与 SQL 范围过滤。[查询与排序](../src/tuagent/manual/retrieval.py)
+- `_excerpt` 用词项和概念在原段内选取短摘录。同代码、同页也可有多个同类段落，例如 `A07910` 第 887 页有两个 `cross_reference`。评测应保存可接受的英文证据短语或稳定段落标识，核对模型实际收到的摘录。[摘录与模型可见结果](../src/tuagent/manual/tools.py)
+
+### Embedding 服务预检
+
+内网 Ollama 的 `/api/tags` 返回 `qwen3-embedding:8b`，模型 digest 为 `64b933495768fbd3b87c20583d379728a07471e0c66733a9df87cd1901b3c44b`。调用 `/api/embed` 批量传入一条中文问题和一条英文短句，收到两条 4096 维向量，元素均为有限数，二范数保留六位小数均为 1。该次预检验证了接口、批量和维度。全库召回质量及 P95 延迟由设计文档第 9 节的对照实验测量。查询侧任务指令和文档侧输入应分别记录。[Qwen 官方模型卡](https://huggingface.co/Qwen/Qwen3-Embedding-8B) · [Ollama 向量接口](https://docs.ollama.com/api/embed)

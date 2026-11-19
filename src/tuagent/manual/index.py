@@ -1,4 +1,5 @@
 import json
+import hashlib
 import os
 import sqlite3
 import tempfile
@@ -15,6 +16,9 @@ from .retrieval import SearchPlan, index_terms
 
 _INDEX_NAME = "manuals.sqlite3"
 _INDEX_VERSION = 1
+_SEARCHABLE = (
+    "p.kind IN ('title', 'cause', 'remedy', 'diagnostic_value', 'cross_reference')"
+)
 _SCHEMA = (
     """CREATE TABLE manuals (
         id INTEGER PRIMARY KEY, manifest TEXT NOT NULL, sha256 TEXT NOT NULL,
@@ -260,11 +264,7 @@ def candidates(
     plan: SearchPlan,
 ) -> Iterator[sqlite3.Row]:
     using_terms = ""
-    parameters: list = [manual_id]
-    code_filter = ""
-    if code:
-        code_filter = "AND p.code = ?"
-        parameters.append(code)
+    parameters: list[str] = []
     if plan.terms:
         placeholders = ", ".join("?" for _ in plan.terms)
         using_terms = (
@@ -277,9 +277,43 @@ def candidates(
         parameters.append(plan.intent)
     if not selection:
         return iter(())
-    return db.execute(
-        f"SELECT p.*, e.title FROM passages p JOIN entries e USING (manual_id, code) "
-        f"WHERE p.manual_id = ? {code_filter} AND ({' OR '.join(selection)}) "
-        "AND p.kind IN ('title', 'cause', 'remedy', 'diagnostic_value', 'cross_reference')",
-        parameters,
+    return scoped_passages(
+        db,
+        manual_id,
+        code,
+        where=f"AND ({' OR '.join(selection)})",
+        parameters=parameters,
     )
+
+
+def scoped_passages(
+    db: sqlite3.Connection,
+    manual_id: int,
+    code: str | None = None,
+    *,
+    where: str = "",
+    parameters: Iterable[str] = (),
+) -> Iterator[sqlite3.Row]:
+    code_filter = "AND p.code = ?" if code else ""
+    return db.execute(
+        "SELECT p.*, e.title, (SELECT count(*) FROM passages q "
+        "WHERE q.manual_id = p.manual_id AND q.code = p.code AND q.page = p.page "
+        "AND q.kind = p.kind AND q.id <= p.id) AS ordinal "
+        "FROM passages p JOIN entries e USING (manual_id, code) "
+        f"WHERE p.manual_id = ? {code_filter} AND {_SEARCHABLE} {where} ORDER BY p.id",
+        (manual_id, *((code,) if code else ()), *parameters),
+    )
+
+
+def passage_key(manual: IndexedManual, row: sqlite3.Row) -> str:
+    data = [
+        manual.edition.model_dump(mode="json"),
+        manual.sha256,
+        [row["code"], row["page"], row["kind"]],
+        row["ordinal"],
+    ]
+    return hashlib.sha256(
+        json.dumps(
+            data, ensure_ascii=False, separators=(",", ":"), sort_keys=True
+        ).encode()
+    ).hexdigest()

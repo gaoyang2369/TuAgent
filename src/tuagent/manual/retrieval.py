@@ -1,6 +1,8 @@
 import re
 import unicodedata
 from collections.abc import Iterator
+from dataclasses import dataclass
+from typing import Literal
 
 
 _WORDS = re.compile(r"[a-z0-9]+(?:[-'][a-z0-9]+)*|[\u3400-\u9fff]+")
@@ -38,10 +40,55 @@ _OPPOSITES = {"overvoltage": "undervoltage", "undervoltage": "overvoltage"}
 _INTENTS = (
     (re.compile(r"\b(?:cause[sd]?|why|reasons?)\b|原因|为什么"), "cause"),
     (
-        re.compile(r"\b(?:remed\w*|check\w*|troubleshoot\w*)\b|核查|检查|处理方法"),
+        re.compile(
+            r"\b(?:remed\w*|check\w*|troubleshoot\w*)\b|核查|检查|排查|处理方法"
+        ),
         "remedy",
     ),
 )
+_CODE_IN_QUERY = re.compile(r"(?<![a-z0-9_])[FA][0-9]{5}(?![a-z0-9_])", re.I | re.ASCII)
+_COMPARISON = re.compile(
+    r"比较|对比|区别|分别|\b(?:compare|versus|vs|difference|both)\b", re.I
+)
+_CODE_CONDITION = re.compile(r"门槛|判据|阈值|怎么触发|如何触发|\bthresholds?\b", re.I)
+
+RetrievalMode = Literal["hybrid_concepts", "keyword_only", "vector", "rrf"]
+
+
+@dataclass(frozen=True)
+class RankingOptions:
+    depth: int = 12
+    rrf_k: int = 20
+    vector_weight: float = 1.5
+    vector_min_similarity: float = 0.70
+    rrf_min_similarity: float = 0.75
+
+    def __post_init__(self) -> None:
+        if (
+            not 8 <= self.depth <= 256
+            or not 1 <= self.rrf_k <= 100
+            or not 0 < self.vector_weight <= 10
+            or not -1 <= self.vector_min_similarity <= 1
+            or not -1 <= self.rrf_min_similarity <= 1
+        ):
+            raise ValueError("Invalid manual ranking configuration")
+
+
+def search_codes(
+    query: str, code: str | None, limit: int
+) -> tuple[tuple[str, ...], str] | None:
+    normalized = unicodedata.normalize("NFKC", query)
+    codes = tuple(
+        dict.fromkeys(match.upper() for match in _CODE_IN_QUERY.findall(normalized))
+    )
+    if code and any(mentioned != code for mentioned in codes):
+        return None
+    if len(codes) > 1 and (len(codes) > limit or not _COMPARISON.search(normalized)):
+        return None
+    remainder = _CODE_IN_QUERY.sub(" ", normalized).strip(" ,，.。:：?？()（）")
+    if codes:
+        remainder = remainder.removeprefix("的").strip()
+    return ((code,) if code else codes), remainder
 
 
 def keywords(text: str) -> set[str]:
@@ -66,7 +113,14 @@ def index_terms(text: str, title: str, code: str) -> Iterator[str]:
 
 
 class SearchPlan:
-    def __init__(self, query: str, semantic: bool) -> None:
+    def __init__(
+        self,
+        query: str,
+        semantic: bool,
+        *,
+        code_filter: bool = False,
+        comparison: bool = False,
+    ) -> None:
         self.keywords = set(
             sorted(keywords(query), key=lambda word: (-len(word), word))[:32]
         )
@@ -79,18 +133,32 @@ class SearchPlan:
             (kind for pattern, kind in _INTENTS if pattern.search(query.casefold())),
             None,
         )
+        if code_filter and self.intent is None:
+            if _CODE_CONDITION.search(query):
+                self.intent = "cause"
+            elif not query or comparison:
+                self.intent = "title"
         self.intent_only = bool(
             self.intent
             and (
                 not self.keywords
+                or comparison
+                or (
+                    code_filter
+                    and self.intent == "cause"
+                    and _CODE_CONDITION.search(query)
+                )
                 or query.strip(" ?？。")
                 in {
                     "原因",
                     "有哪些原因",
                     "什么原因",
                     "核查",
+                    "排查",
                     "如何排查",
+                    "怎么排查",
                     "检查",
+                    "处理方法",
                 }
             )
         )

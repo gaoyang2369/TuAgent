@@ -1,0 +1,110 @@
+{
+  "dataset_sha256": "625d8b6c7e00fa1328ff32983ef8672ce6277ea4dda635c9fe9bb0a638ceb861",
+  "baseline_commit": "79696befd298ba85af71371363c596472fb7e3ae",
+  "corpus_sha256": "3f37d793f726b4d229dc362a0f340dd2853ab3d16184a828bfd4e5e2a52a79b3",
+  "model_digest": "64b933495768fbd3b87c20583d379728a07471e0c66733a9df87cd1901b3c44b",
+  "matrix_sha256": "48765a3db2a941669664efe00a54a28b5ea04b4c3dc1de38cb37999d78fadbed",
+  "ranking": {
+    "depth": 12,
+    "rrf_k": 20,
+    "vector_weight": 1.5,
+    "vector_min_similarity": 0.7,
+    "rrf_min_similarity": 0.75
+  },
+  "retrieval_source_sha256s": {
+    "__init__.py": "d034c5bd4002384cbe5381d059382212ef7fa4197cf026b36e27f3089f92f606",
+    "contracts.py": "32c362c83feafc7e1cdb597205b8d4d0f2cb029335542f3e80b74d624f94974e",
+    "importer.py": "5bb81cc657c645d52be8214bc40c95d6dce1159cea39dcf1d2f3cdc6ca5fce5b",
+    "index.py": "0612d230830f4eba3a2de4a2421f216e291bd865535395d1565a9c75d3827aa5",
+    "parser.py": "111320a32ad8b7f4534b15531fc499515fca85492abadd932bd10c48411d092c",
+    "retrieval.py": "913254427bf77264ba5a4db49205c7cf2e54edbb7b2a72714ee75318f1051709",
+    "tools.py": "51982266ce11daebf2cf38a3537a83ae6acdd4cc9cb551e4658da2dbfc04a2d7",
+    "vectors.py": "3234d69496833a36bc8b9c35f6bec2fd98e76226776c1b4d5cc85bec740681e5"
+  },
+  "fallback_to_rules": false,
+  "warmup_queries": 1,
+  "query_vector_cache": false,
+  "development_selection": {
+    "vector": {
+      "config": {
+        "vector_min_similarity": 0.7
+      },
+      "objective": [
+        1,
+        0,
+        1,
+        3,
+        0.3333
+      ],
+      "summary": {
+        "lookup_passed": 1,
+        "lookup_total": 1,
+        "answerable": 9,
+        "hit_at_1": 3,
+        "hit_at_5": 3,
+        "mrr_at_5": 0.3333,
+        "support_at_1": 1,
+        "support_at_5": 1,
+        "zh_total": 4,
+        "zh_hit_at_1": 1,
+        "zh_hit_at_5": 1,
+        "zh_support_at_5": 0,
+        "negative_total": 7,
+        "negative_false_hits": 0,
+        "no_answer_total": 4,
+        "no_answer_false_hits": 0,
+        "wrong_code_at_1": 0,
+        "wrong_page_at_1": 0,
+        "wrong_code_in_5": 3,
+        "wrong_page_in_5": 0,
+        "excerpt_insufficient": 2,
+        "scope_failures": 0,
+        "negative_status_mismatches": 0,
+        "errors": 0,
+        "fallbacks": 0
+      }
+    },
+    "rrf": {
+      "config": {
+        "rrf_min_similarity": 0.75,
+        "depth": 12,
+        "rrf_k": 20,
+        "vector_weight": 1.5
+      },
+      "objective": [
+        4,
+        0,
+        4,
+        6,
+        0.6667
+      ],
+      "summary": {
+        "lookup_passed": 1,
+        "lookup_total": 1,
+        "answerable": 9,
+        "hit_at_1": 6,
+        "hit_at_5": 6,
+        "mrr_at_5": 0.6667,
+        "support_at_1": 4,
+        "support_at_5": 4,
+        "zh_total": 4,
+        "zh_hit_at_1": 1,
+        "zh_hit_at_5": 1,
+        "zh_support_at_5": 0,
+        "negative_total": 7,
+        "negative_false_hits": 0,
+        "no_answer_total": 4,
+        "no_answer_false_hits": 0,
+        "wrong_code_at_1": 0,
+        "wrong_page_at_1": 0,
+        "wrong_code_in_5": 3,
+        "wrong_page_in_5": 0,
+        "excerpt_insufficient": 2,
+        "scope_failures": 0,
+        "negative_status_mismatches": 0,
+        "errors": 0,
+        "fallbacks": 0
+      }
+    }
+  }
+}

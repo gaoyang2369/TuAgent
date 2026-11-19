@@ -80,7 +80,11 @@ def _call(call_id: str, name: str, **args) -> ToolCall:
 
 
 async def _agent(
-    index_dir: Path, calls: list[ToolCall], *, semantic: bool = True
+    index_dir: Path,
+    calls: list[ToolCall],
+    *,
+    semantic: bool = True,
+    mode=None,
 ) -> dict[str, dict]:
     seen = {}
 
@@ -100,7 +104,7 @@ async def _agent(
         read_results,
     )
     registry = ToolRegistry()
-    register_manual_tools(registry, index_dir=index_dir, semantic=semantic)
+    register_manual_tools(registry, index_dir=index_dir, semantic=semantic, mode=mode)
     result = await Agent(model, tools=registry, max_turns=2).run(
         "Check manual meanings and original evidence."
     )
@@ -123,7 +127,12 @@ def _on_original(excerpt: str, original: str) -> bool:
     return " ".join(excerpt.strip("…").split()) in " ".join(original.split())
 
 
-async def _verify(pdf_path: Path, index_dir: Path) -> dict:
+async def _verify(
+    pdf_path: Path,
+    index_dir: Path,
+    vector_mode=None,
+    vector_query="刹车时直流侧电压往上窜，手册列了哪些原因？",
+) -> dict:
     original = _original(pdf_path)
     calls = [
         *(_call(f"lookup-{code}", "lookup_drive_code", code=code) for code in PAGES),
@@ -224,10 +233,39 @@ async def _verify(pdf_path: Path, index_dir: Path) -> dict:
         fallback["status"] == "ok" and fallback["retrieval_mode"] == "keyword_only"
     ), fallback
     _check_reference(fallback["hits"][0]["reference"], 905)
+    vector_result = {}
+    if vector_mode:
+        payload = (
+            await _agent(
+                index_dir,
+                [_call("dense", "search_manual", query=vector_query, limit=5)],
+                mode=vector_mode,
+            )
+        )["dense"]
+        assert payload["actual_mode"] == vector_mode, payload
+        ranks = [
+            rank
+            for rank, hit in enumerate(payload.get("hits", []), 1)
+            if hit["code"] == "F30002"
+            and hit["kind"] == "cause"
+            and hit["reference"]["pdf_page"] == 905
+            and "regenerates" in hit["excerpt"].lower()
+        ]
+        assert ranks, payload
+        hit = payload["hits"][ranks[0] - 1]
+        _check_reference(hit["reference"], 905)
+        assert _on_original(hit["excerpt"], prior_to_next[0]), hit
+        assert hit["applicability"]["status"] == "matches_supplied_scope", hit
+        vector_result = {
+            "vector_agent_mode": vector_mode,
+            "vector_agent_query": vector_query,
+            "vector_agent_F30002_cause_rank": ranks[0],
+            "vector_agent_F30002_cause_page": 905,
+        }
     return {
         "status": "passed",
         "sha256": SHA256,
-        "agent_round_trip_calls": len(calls) + 1,
+        "agent_round_trip_calls": len(calls) + 1 + bool(vector_mode),
         "codes": codes,
         "F30002_remedy_pdf_page": remedy["reference"]["pdf_page"],
         "F30002_stops_before_F30003": True,
@@ -237,6 +275,7 @@ async def _verify(pdf_path: Path, index_dir: Path) -> dict:
         "unrelated_query": results["unrelated"]["status"],
         "fallback": fallback["retrieval_mode"],
         "simulator_applicability": results["simulator"]["applicability"]["status"],
+        **vector_result,
     }
 
 
@@ -244,11 +283,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pdf", type=Path, required=True)
     parser.add_argument("--index-dir", type=Path, required=True)
+    parser.add_argument("--vector-mode", choices=("vector", "rrf"))
+    parser.add_argument(
+        "--vector-query", default="刹车时直流侧电压往上窜，手册列了哪些原因？"
+    )
     args = parser.parse_args()
     try:
         print(
             json.dumps(
-                asyncio.run(_verify(args.pdf, args.index_dir)),
+                asyncio.run(
+                    _verify(
+                        args.pdf, args.index_dir, args.vector_mode, args.vector_query
+                    )
+                ),
                 ensure_ascii=True,
                 indent=2,
             )

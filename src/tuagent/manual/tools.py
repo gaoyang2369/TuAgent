@@ -2,6 +2,8 @@ import asyncio
 import json
 import re
 import sqlite3
+from collections import defaultdict
+from itertools import zip_longest
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
@@ -13,12 +15,21 @@ from .index import (
     ManualIndexError,
     candidates,
     entry_locations,
+    passage_key,
     read_entry,
     read_index,
     read_manuals,
 )
 from .parser import SECTION, SECTION_TITLE
-from .retrieval import SearchPlan, concepts, keywords
+from .retrieval import (
+    RankingOptions,
+    RetrievalMode,
+    SearchPlan,
+    concepts,
+    keywords,
+    search_codes,
+)
+from .vectors import Embedder, VectorError, VectorSearch, corpus
 
 
 _SIMULATOR = {
@@ -183,66 +194,95 @@ def _excerpt(text: str, plan: SearchPlan) -> str:
     return ("…" if start else "") + text[start:end] + ("…" if end < len(text) else "")
 
 
-def _search(
+Ranked = list[tuple[float, IndexedManual, sqlite3.Row]]
+
+
+def _rule_rank(
     db: sqlite3.Connection,
     manuals: list[IndexedManual],
-    args: SearchArgs,
-    *,
-    semantic: bool,
-) -> dict:
-    mode = "hybrid_concepts" if semantic else "keyword_only"
-    base = {"retrieval_mode": mode}
-    if args.section and args.section.casefold() not in {
-        SECTION,
-        SECTION_TITLE.casefold(),
-        f"{SECTION} {SECTION_TITLE}".casefold(),
-    }:
-        return {
-            **base,
-            "status": "no_results",
-            "message": "Insufficient evidence in the requested section.",
-            "hits": [],
-        }
-    plan = SearchPlan(args.query, semantic)
-    ranked: list[tuple[float, IndexedManual, sqlite3.Row]] = []
+    code: str | None,
+    plan: SearchPlan,
+) -> Ranked:
+    ranked: Ranked = []
     for manual in manuals:
-        for row in candidates(db, manual.id, args.code, plan):
+        for row in candidates(db, manual.id, code, plan):
             score = plan.rank(
                 row["code"],
                 row["title"],
                 row["kind"],
                 row["text"],
-                code_filter=args.code is not None,
+                code_filter=code is not None,
             )
             if score > 0:
                 ranked.append((score, manual, row))
     ranked.sort(key=lambda item: (-item[0], item[1].id, item[2]["id"]))
-    if not ranked:
-        return {
-            **base,
-            "status": "no_results",
-            "message": "Insufficient relevant evidence in the scoped manuals.",
-            "hits": [],
-        }
+    return ranked
+
+
+def _rrf(rules: Ranked, vectors: Ranked, options: RankingOptions) -> Ranked:
+    scores: dict[str, float] = defaultdict(float)
+    passages = {}
+    for list_, weight in ((rules, 1.0), (vectors, options.vector_weight)):
+        for rank, (_, manual, row) in enumerate(list_[: options.depth], 1):
+            key = passage_key(manual, row)
+            scores[key] += weight / (options.rrf_k + rank)
+            passages[key] = (manual, row)
+    order = sorted(
+        scores,
+        key=lambda key: (-scores[key], passages[key][0].id, passages[key][1]["id"]),
+    )
+    return [(scores[key], *passages[key]) for key in order]
+
+
+def _hybrid_rank(
+    rules: Ranked, vectors: Ranked, options: RankingOptions, scoped_code: bool
+) -> Ranked:
+    threshold = options.rrf_min_similarity
+    eligible = [item for item in vectors if item[0] >= threshold]
+    if not eligible and rules and not scoped_code:
+        rule_leaders = {passage_key(manual, row) for _, manual, row in rules[:3]}
+        eligible = [
+            item
+            for item in vectors[:3]
+            if item[0] >= threshold - 0.05
+            and passage_key(item[1], item[2]) in rule_leaders
+        ]
+    if eligible or (scoped_code and rules):
+        return _rrf(rules, eligible, options)
+    return []
+
+
+def _group_vectors(vectors: Ranked, codes: tuple[str, ...]) -> list[Ranked]:
+    if not codes:
+        return [vectors]
+    grouped: dict[str, Ranked] = defaultdict(list)
+    for item in vectors:
+        grouped[item[2]["code"]].append(item)
+    return [grouped[code] for code in codes]
+
+
+def _no_results(
+    base: dict, message: str = "Insufficient relevant evidence in the scoped manuals."
+) -> dict:
+    return {**base, "status": "no_results", "message": message, "hits": []}
+
+
+def _hit(item, args: SearchArgs, plan: SearchPlan) -> dict:
+    _, manual, row = item
     return {
-        **base,
-        "status": "ok",
-        "matching_passages": len(ranked),
-        "hits": [
-            {
-                "code": row["code"],
-                "title": row["title"],
-                "kind": row["kind"],
-                "excerpt": _excerpt(row["text"], plan),
-                "reference": _citation(manual, row["page"]),
-                "applicability": _applicability(manual, args),
-            }
-            for _, manual, row in ranked[: args.limit]
-        ],
+        "passage_id": passage_key(manual, row),
+        "code": row["code"],
+        "title": row["title"],
+        "kind": row["kind"],
+        "excerpt": _excerpt(row["text"], plan),
+        "reference": _citation(manual, row["page"]),
+        "applicability": _applicability(manual, args),
     }
 
 
-def _output(result: dict, *, is_error: bool = False) -> ToolOutput:
+def _output(
+    result: dict, *, is_error: bool = False, diagnostics: dict | None = None
+) -> ToolOutput:
     payload = dict(result)
     content = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     for key in ("hits", "candidates"):
@@ -266,24 +306,161 @@ def _output(result: dict, *, is_error: bool = False) -> ToolOutput:
             }
         payload["content_truncated"] = True
         content = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-    return ToolOutput(content, details=result, is_error=is_error)
+    details = (
+        {**result, "ranking_diagnostics": diagnostics}
+        if diagnostics is not None
+        else result
+    )
+    return ToolOutput(content, details=details, is_error=is_error)
 
 
 class _ManualTools:
-    def __init__(self, index_dir: Path, semantic: bool) -> None:
+    def __init__(
+        self,
+        index_dir: Path,
+        mode: RetrievalMode,
+        embedder: Embedder | None,
+        fallback_to_rules: bool,
+        ranking: RankingOptions,
+    ) -> None:
         self.index_dir = index_dir
-        self.semantic = semantic
+        self.mode = mode
+        self.fallback_to_rules = fallback_to_rules
+        self.ranking = ranking
+        self.vectors = VectorSearch(index_dir, embedder)
+
+    def _mode(
+        self, actual: RetrievalMode | None = None, fallback_reason: str | None = None
+    ) -> dict:
+        return {
+            "retrieval_mode": actual or self.mode,
+            "requested_mode": self.mode,
+            "actual_mode": actual,
+            "fallback_reason": fallback_reason,
+        }
+
+    def _search(
+        self,
+        db: sqlite3.Connection,
+        manuals: list[IndexedManual],
+        applicable: list[IndexedManual],
+        args: SearchArgs,
+    ) -> ToolOutput:
+        if args.section and args.section.casefold() not in {
+            SECTION,
+            SECTION_TITLE.casefold(),
+            f"{SECTION} {SECTION_TITLE}".casefold(),
+        }:
+            return _output(
+                _no_results(
+                    self._mode(), "Insufficient evidence in the requested section."
+                )
+            )
+        routed = search_codes(args.query, args.code, args.limit)
+        if routed is None:
+            return _output(
+                {
+                    **self._mode(),
+                    "status": "ambiguous_code",
+                    "hits": [],
+                    "message": "Resolve conflicting codes, or request an explicit comparison with space for each code.",
+                }
+            )
+        codes, query = routed
+        if any(
+            not any(read_entry(db, manual.id, code) for manual in applicable)
+            for code in codes
+        ):
+            return _output(
+                _no_results(
+                    self._mode(), "An explicit code is absent from the scoped manuals."
+                )
+            )
+        plan = SearchPlan(
+            query,
+            self.mode != "keyword_only",
+            code_filter=bool(codes),
+            comparison=len(codes) > 1,
+        )
+        base = self._mode(self.mode)
+        rules = (
+            [_rule_rank(db, applicable, code, plan) for code in (codes or (None,))]
+            if self.mode != "vector"
+            else []
+        )
+        ranked = rules
+        diagnostics = None
+        if self.mode in {"vector", "rrf"}:
+            try:
+                vectors = self.vectors.rank(
+                    corpus(db, manuals), {m.id for m in applicable}, codes, args.query
+                )
+            except VectorError as exc:
+                if not self.fallback_to_rules:
+                    return _output(
+                        {
+                            **self._mode(),
+                            "status": "vector_unavailable",
+                            "hits": [],
+                            "vector_error": exc.reason,
+                            "message": str(exc),
+                        },
+                        is_error=True,
+                    )
+                base = {
+                    **self._mode("hybrid_concepts", exc.reason),
+                    "fallback_message": str(exc),
+                }
+                ranked = rules or [
+                    _rule_rank(db, applicable, code, plan)
+                    for code in (codes or (None,))
+                ]
+            else:
+                groups = _group_vectors(vectors, codes)
+                diagnostics = {
+                    "vector_candidates": [
+                        {
+                            **_hit(item, args, plan),
+                            "similarity": round(item[0], 6),
+                        }
+                        for group in groups
+                        for item in group[:5]
+                    ],
+                }
+                if self.mode == "vector":
+                    ranked = [
+                        [
+                            item
+                            for item in group
+                            if item[0] >= self.ranking.vector_min_similarity
+                        ]
+                        for group in groups
+                    ]
+                else:
+                    ranked = [
+                        _hybrid_rank(
+                            rule_group, vector_group, self.ranking, bool(codes)
+                        )
+                        for rule_group, vector_group in zip(rules, groups, strict=True)
+                    ]
+        if not all(ranked):
+            return _output(_no_results(base), diagnostics=diagnostics)
+        balanced = (
+            item for slots in zip_longest(*ranked) for item in slots if item is not None
+        )
+        hits = [_hit(item, args, plan) for _, item in zip(range(args.limit), balanced)]
+        return _output(
+            {
+                **base,
+                "status": "ok",
+                "matching_passages": sum(map(len, ranked)),
+                "hits": hits,
+            },
+            diagnostics=diagnostics,
+        )
 
     def _read(self, args: LookupArgs | SearchArgs) -> ToolOutput:
-        base = (
-            _lookup_base(args)
-            if isinstance(args, LookupArgs)
-            else {
-                "retrieval_mode": "hybrid_concepts"
-                if self.semantic
-                else "keyword_only",
-            }
-        )
+        base = _lookup_base(args) if isinstance(args, LookupArgs) else self._mode()
         try:
             with read_index(self.index_dir) as db:
                 manuals = read_manuals(db) if db is not None else []
@@ -319,7 +496,7 @@ class _ManualTools:
                     )
                 if isinstance(args, LookupArgs):
                     return _output(_lookup(db, applicable, args))
-                return _output(_search(db, applicable, args, semantic=self.semantic))
+                return self._search(db, manuals, applicable, args)
         except ManualIndexError as exc:
             return _output(
                 {**base, "status": "index_read_error", "message": str(exc)},
@@ -335,9 +512,19 @@ def register_manual_tools(
     *,
     index_dir: Path | str,
     semantic: bool = True,
+    mode: RetrievalMode | None = None,
+    embedder: Embedder | None = None,
+    fallback_to_rules: bool = False,
+    ranking: RankingOptions = RankingOptions(),
 ) -> None:
     """Register read-only manual tools. The PDF and index paths stay in the application."""
-    tools = _ManualTools(Path(index_dir), semantic)
+    if mode is None:
+        mode = "hybrid_concepts" if semantic else "keyword_only"
+    if mode not in {"hybrid_concepts", "keyword_only", "vector", "rrf"}:
+        raise ValueError("Unknown manual retrieval mode")
+    if not semantic and mode != "keyword_only":
+        raise ValueError("semantic=False requires keyword_only")
+    tools = _ManualTools(Path(index_dir), mode, embedder, fallback_to_rules, ranking)
     registry.register(
         "lookup_drive_code",
         "Look up a complete SINAMICS fault or alarm code, including the F/A prefix and leading zeros. "
@@ -348,7 +535,8 @@ def register_manual_tools(
     registry.register(
         "search_manual",
         "Find short source excerpts about symptoms, causes or checks in scoped local SINAMICS manuals. "
-        "Describe the symptom in Chinese or English. Supply the full code and edition when known.",
+        "Describe the symptom in Chinese or English. Supply the edition and a single full code when known. "
+        "To compare codes, name them in the query, explicitly ask for a comparison, and omit the code field.",
         SearchArgs,
         tools.execute,
     )
