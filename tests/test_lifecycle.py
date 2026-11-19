@@ -2,6 +2,7 @@ import asyncio
 import unittest
 from collections.abc import AsyncIterator
 from dataclasses import FrozenInstanceError
+from typing import cast
 
 from pydantic import BaseModel
 
@@ -24,6 +25,67 @@ from tuagent import (
 
 
 class LifecycleTests(unittest.IsolatedAsyncioTestCase):
+    async def test_caller_cancel_after_tool_is_released_prevents_next_dispatch(
+        self,
+    ) -> None:
+        class Args(BaseModel):
+            pass
+
+        first_call = ToolCall("first-1", "first", "{}")
+        second_call = ToolCall("second-1", "second", "{}")
+        assistant = AssistantMessage(tool_calls=(first_call, second_call))
+        model = ScriptedModel(ModelReply(assistant, "tool_calls"))
+        agent = Agent(model)
+        waiting = asyncio.Event()
+        ready = asyncio.Event()
+        executions: list[str] = []
+        events: list[RunEvent] = []
+
+        async def first(args: Args, ctx: ToolContext) -> ToolOutput:
+            executions.append(ctx.tool_call_id)
+            waiting.set()
+            await ready.wait()
+            return ToolOutput("confirmed")
+
+        async def second(args: Args, ctx: ToolContext) -> ToolOutput:
+            executions.append(ctx.tool_call_id)
+            return ToolOutput("second result")
+
+        agent.tools.register("first", "Return a result after release", Args, first)
+        agent.tools.register("second", "Record a call", Args, second)
+        task = asyncio.create_task(agent.run("Run both", on_event=events.append))
+        try:
+            await asyncio.wait_for(waiting.wait(), timeout=5)
+        finally:
+            ready.set()
+            task.cancel()
+            with self.assertRaises(asyncio.CancelledError):
+                await task
+
+        self.assertEqual(executions, [first_call.id])
+        self.assertEqual(len(model.requests), 1)
+        self.assertEqual(
+            agent.history[:-1],
+            (
+                UserMessage("Run both"),
+                assistant,
+                ToolResultMessage(first_call.id, "confirmed"),
+            ),
+        )
+        skipped = agent.history[-1]
+        assert isinstance(skipped, ToolResultMessage)
+        self.assertEqual(
+            (skipped.tool_call_id, skipped.is_error, skipped.error_code),
+            (second_call.id, True, "not_started"),
+        )
+        self.assertEqual(
+            [event.tool_call_id for event in events if event.kind == "tool_start"],
+            [first_call.id],
+        )
+        self.assertEqual(
+            [event.status for event in events if event.kind == "run_end"], ["cancelled"]
+        )
+
     async def test_task_cancellation_keeps_the_first_result_and_pairs_the_second(
         self,
     ) -> None:
@@ -293,14 +355,45 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(model.requests), 1)
         self.assertEqual(events, [])
 
+    async def test_continue_rejects_unpaired_tool_results_before_requesting_model(
+        self,
+    ) -> None:
+        calls = (ToolCall("first", "save", "{}"), ToolCall("second", "save", "{}"))
+        assistant = AssistantMessage(tool_calls=calls)
+        first = ToolResultMessage("first", "saved first")
+        second = ToolResultMessage("second", "saved second")
+        user = UserMessage("Save both")
+
+        for history in (
+            (user, assistant, first),
+            (user, assistant, first, UserMessage("Try again")),
+            (user, assistant, first, ToolResultMessage("other", "unexpected")),
+            (user, assistant, second, first),
+            (user, assistant, first, second, second),
+            (user, first),
+        ):
+            with self.subTest(history=history):
+                model = ScriptedModel(ModelReply(AssistantMessage("Recovered")))
+                agent = Agent(model)
+                events: list[RunEvent] = []
+                # Seed histories the public runtime normally prevents.
+                agent._history.extend(history)
+
+                with self.assertRaisesRegex(RuntimeError, "Continuation requires"):
+                    await agent.continue_run(on_event=events.append)
+
+                self.assertEqual(model.requests, [])
+                self.assertEqual(events, [])
+                self.assertEqual(agent.history, history)
+
     async def test_disconnect_preserves_settled_history_and_continue_only_requests_model(
         self,
     ) -> None:
         class Args(BaseModel):
             pass
 
-        call = ToolCall("save-1", "save", "{}")
-        assistant = AssistantMessage(tool_calls=(call,))
+        calls = (ToolCall("save-1", "save", "{}"), ToolCall("save-2", "save", "{}"))
+        assistant = AssistantMessage(tool_calls=calls)
 
         def disconnect(request: ModelRequest) -> ModelReply:
             raise ConnectionError("connection lost")
@@ -335,7 +428,8 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                     (
                         UserMessage("Save it"),
                         assistant,
-                        ToolResultMessage(call.id, "stored"),
+                        ToolResultMessage(calls[0].id, "stored"),
+                        ToolResultMessage(calls[1].id, "stored"),
                     ),
                 )
                 self.assertEqual(failed.messages, agent.history)
@@ -352,7 +446,54 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(resumed.messages, (AssistantMessage("Recovered"),))
                 self.assertEqual(len(model.requests), 3)
                 self.assertEqual(model.requests[2], model.requests[1])
-                self.assertEqual(executions, [call.id])
+                self.assertEqual(executions, [call.id for call in calls])
+
+    async def test_malformed_second_call_rejects_entire_batch(self) -> None:
+        class Args(BaseModel):
+            pass
+
+        first = ToolCall("first", "save", "{}")
+        for malformed_call, code in (
+            (ToolCall("second", cast(str, ["save"]), "{}"), "invalid_tool_call_name"),
+            (ToolCall("second", "save", cast(str, {})), "invalid_tool_call_arguments"),
+            (cast(ToolCall, {}), "invalid_tool_call"),
+        ):
+            with self.subTest(code=code):
+                executions: list[str] = []
+                events: list[RunEvent] = []
+
+                async def save(args: Args, ctx: ToolContext) -> ToolOutput:
+                    executions.append(ctx.tool_call_id)
+                    return ToolOutput("saved")
+
+                assistant = AssistantMessage(tool_calls=(first, malformed_call))
+                model = ScriptedModel(ModelReply(assistant, "tool_calls"))
+                agent = Agent(model)
+                agent.tools.register("save", "Save a value", Args, save)
+
+                result = await agent.run("Save two values", on_event=events.append)
+
+                self.assertEqual((result.status, result.error_code), ("failed", code))
+                self.assertEqual(agent.history, (UserMessage("Save two values"),))
+                self.assertEqual(executions, [])
+                self.assertFalse(any(event.kind == "tool_start" for event in events))
+                self.assertEqual(
+                    [event.error_code for event in events if event.kind == "run_end"],
+                    [code],
+                )
+
+    async def test_tool_calls_stop_reason_requires_at_least_one_call(self) -> None:
+        model = ScriptedModel(ModelReply(AssistantMessage("No calls"), "tool_calls"))
+        agent = Agent(model)
+
+        result = await agent.run("Save a value")
+
+        self.assertEqual(
+            (result.status, result.error_code), ("failed", "invalid_stop_reason")
+        )
+        self.assertEqual(result.messages, (UserMessage("Save a value"),))
+        self.assertEqual(agent.history, result.messages)
+        self.assertEqual(len(model.requests), 1)
 
     async def test_length_skips_the_entire_batch_even_with_valid_json(self) -> None:
         class Args(BaseModel):

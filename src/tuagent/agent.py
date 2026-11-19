@@ -2,8 +2,8 @@ import asyncio
 from typing import Any
 
 from .events import EventHandler
-from .loop import _RunLoop
-from .messages import Message, RunResult, ToolResultMessage, UserMessage
+from .loop import _RunLoop, _can_continue
+from .messages import Message, RunResult, UserMessage
 from .model import ModelProvider
 from .tools import ToolExecutor, ToolRegistry
 
@@ -55,10 +55,7 @@ class Agent:
     ) -> RunResult:
         if self._active_run is not None:
             raise RuntimeError("This agent already has a run in progress")
-        if user_message is None and (
-            not self._history
-            or not isinstance(self._history[-1], (UserMessage, ToolResultMessage))
-        ):
+        if user_message is None and not _can_continue(self._history):
             raise RuntimeError(
                 "Continuation requires a user message or settled tool results"
             )

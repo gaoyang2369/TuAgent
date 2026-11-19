@@ -1,10 +1,13 @@
 import asyncio
 import logging
+from collections import deque
+from collections.abc import Sequence
 from typing import Any, NamedTuple
 from uuid import uuid4
 
 from .events import EventHandler, RunEvent, RunEventKind
 from .messages import (
+    AssistantMessage,
     Message,
     RunResult,
     RunStatus,
@@ -52,6 +55,10 @@ class _RunLoop:
         self._run_id = uuid4().hex
         self._sequence = 0
         self._turns = 0
+        self._caller = asyncio.current_task()
+        self._caller_cancels = (
+            self._caller.cancelling() if self._caller is not None else 0
+        )
         self._task: asyncio.Task[Any] | None = None
         self._abort_requested = False
         self._interrupt: asyncio.Handle | None = None
@@ -65,6 +72,12 @@ class _RunLoop:
             self._interrupt = self._task.get_loop().call_soon(self._task.cancel)
 
     def _check_abort(self) -> None:
+        # The worker may resume before the caller can relay its cancellation.
+        if (
+            self._caller is not None
+            and self._caller.cancelling() > self._caller_cancels
+        ):
+            self._abort_requested = True
         if self._abort_requested:
             if self._interrupt is not None:
                 self._interrupt.cancel()
@@ -123,16 +136,28 @@ class _RunLoop:
         self._check_abort()
         if reply is None:
             return _Outcome("failed", error_code="model_stream_incomplete")
-        if reply.stop_reason not in ("stop", "tool_calls", "length"):
+        stop_reason = reply.stop_reason
+        if not isinstance(stop_reason, str) or stop_reason not in (
+            "stop",
+            "tool_calls",
+            "length",
+        ):
             return _Outcome("failed", error_code="invalid_stop_reason")
 
         message = reply.message
+        if not isinstance(message, AssistantMessage) or not isinstance(
+            message.content, str
+        ):
+            return _Outcome("failed", error_code="invalid_assistant_message")
         calls = message.tool_calls
-        if not _has_valid_call_ids(calls):
-            return _Outcome("failed", error_code="invalid_tool_call_id")
+        if stop_reason == "tool_calls" and not calls:
+            return _Outcome("failed", error_code="invalid_stop_reason")
+        call_error = _tool_call_error(calls)
+        if call_error is not None:
+            return _Outcome("failed", error_code=call_error)
 
         self._commit(message, turn=turn)
-        if reply.stop_reason == "length":
+        if stop_reason == "length":
             if not calls:
                 return _Outcome("incomplete", message.content, "truncated")
             for call in calls:
@@ -255,10 +280,34 @@ class _RunLoop:
             _logger.exception("Run event observer failed for %s", kind)
 
 
-def _has_valid_call_ids(calls: tuple[ToolCall, ...]) -> bool:
+def _tool_call_error(calls: tuple[ToolCall, ...]) -> str | None:
     call_ids: set[str] = set()
     for call in calls:
+        if not isinstance(call, ToolCall):
+            return "invalid_tool_call"
         if not isinstance(call.id, str) or not call.id.strip() or call.id in call_ids:
-            return False
+            return "invalid_tool_call_id"
+        if not isinstance(call.name, str):
+            return "invalid_tool_call_name"
+        if not isinstance(call.arguments, str):
+            return "invalid_tool_call_arguments"
         call_ids.add(call.id)
-    return True
+    return None
+
+
+def _can_continue(history: Sequence[Message]) -> bool:
+    if not history or not isinstance(history[-1], (UserMessage, ToolResultMessage)):
+        return False
+
+    expected_ids: deque[str] = deque()
+    for message in history:
+        if isinstance(message, ToolResultMessage):
+            if not expected_ids or message.tool_call_id != expected_ids.popleft():
+                return False
+        elif expected_ids:
+            return False
+        elif isinstance(message, AssistantMessage):
+            if _tool_call_error(message.tool_calls) is not None:
+                return False
+            expected_ids.extend(call.id for call in message.tool_calls)
+    return not expected_ids
