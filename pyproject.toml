@@ -12,6 +12,10 @@ dependencies = ["pydantic>=2,<3"]
 [project.optional-dependencies]
 chat-completions = ["openai>=2,<3"]
 mysql = ["PyMySQL[rsa]>=1.1.1,<2"]
+manual = ["pypdf>=6,<7"]
+
+[project.scripts]
+tuagent-import-manual = "tuagent.manual.importer:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
