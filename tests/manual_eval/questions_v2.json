@@ -1,0 +1,720 @@
+{
+  "version": "g120-evidence-v2",
+  "baseline_commit": "d7720f004129feb400f9af5aa3e8f9b423f43837",
+  "pdf_sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+  "scope": {
+    "device_series": "G120",
+    "control_unit": "CU240E-2",
+    "firmware": "4.7 SP14",
+    "edition": "02/2023",
+    "document_number": "A5E33839529",
+    "language": "en-US"
+  },
+  "section": "4.2",
+  "retrievable_passages": 1380,
+  "questions": [
+    {
+      "split": "blind",
+      "id": "b01",
+      "group": "pc-master-return",
+      "slice": "zh_no_code",
+      "query": "电脑接管后监视周期内没收到生命信号，控制权退回哪里？",
+      "evidence": [
+        [
+          [
+            "F01030",
+            "cause",
+            823,
+            "The master control was returned to the active BICO interconnection."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b02",
+      "group": "units-zero-reference",
+      "slice": "zh_no_code",
+      "query": "单位切换成标幺表示时，参考参数能等于零吗？",
+      "evidence": [
+        [
+          [
+            "F01033",
+            "cause",
+            824,
+            "it is not permissible for any of the required reference parameters to be equal to 0.0"
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b03",
+      "group": "parameter-save-poweron",
+      "slice": "zh_no_code",
+      "query": "修改了要求保存再上电的参数，控制单元需要做什么？",
+      "evidence": [
+        [
+          [
+            "F01040",
+            "remedy",
+            826,
+            "Save parameters (p0971)."
+          ]
+        ],
+        [
+          [
+            "F01040",
+            "remedy",
+            826,
+            "Carry out a POWER ON (switch-off/switch-on) for the Control Unit."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b04",
+      "group": "safety-timeslice-ack",
+      "slice": "zh_no_code",
+      "query": "两个安全处理器的时间片没同步成功，这种停机能确认复位吗？",
+      "evidence": [
+        [
+          [
+            "F01651",
+            "cause",
+            842,
+            "This fault results in a STOP A that cannot be acknowledged."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b05",
+      "group": "sensor-eval-minimum-delay",
+      "slice": "zh_no_code",
+      "query": "电机温度探头评估异常后，从报警到故障的最短等待时间是多少？",
+      "evidence": [
+        [
+          [
+            "A07015",
+            "cause",
+            871,
+            "at the earliest, 50 ms after alarm A07015"
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b06",
+      "group": "restart-attempt-counter",
+      "slice": "zh_no_code",
+      "query": "自动重启耗尽的计数，是每次重新启动尝试都会减一次吗？",
+      "evidence": [
+        [
+          [
+            "F07320",
+            "cause",
+            875,
+            "The number of restart attempts (p1211) is decremented at each new start attempt."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b07",
+      "group": "flying-search-current",
+      "slice": "zh_no_code",
+      "query": "捕捉再启动时测到搜索电流太小，手册提到电机有没有可能根本没接？",
+      "evidence": [
+        [
+          [
+            "F07330",
+            "cause",
+            875,
+            "It is possible that the motor is not connected."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b08",
+      "group": "vdcm-intervention-ramp",
+      "slice": "zh_no_code",
+      "query": "直流母线电压上限控制器介入时，斜坡下降时间会不会自动延长？",
+      "evidence": [
+        [
+          [
+            "A07400",
+            "cause",
+            876,
+            "The ramp-down times are automatically increased in order to maintain the DC link voltage (r0070) within the permissible limits."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b09",
+      "group": "vdcm-disabled-driven-load",
+      "slice": "zh_no_code",
+      "query": "直流电压上限控制被切出时，被负载一直拖着进入再生模式算不算原因？",
+      "evidence": [
+        [
+          [
+            "A07401",
+            "cause",
+            876,
+            "the motor is permanently in the regenerative mode as a result of a load that is driving the motor."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b10",
+      "group": "infeed-ready-response",
+      "slice": "zh_no_code",
+      "query": "内部发了接通指令但进线单元不报就绪，缺少直流母线电压是不是原因？",
+      "evidence": [
+        [
+          [
+            "F07802",
+            "cause",
+            881,
+            "DC link voltage is not present."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b11",
+      "group": "regenerative-duration-pm",
+      "slice": "zh_no_code",
+      "query": "额定再生功率超出多久会触发模块的再生功率限制故障？",
+      "evidence": [
+        [
+          [
+            "F07806",
+            "cause",
+            882,
+            "the regenerative rated power r0206[2] was exceeded for more than 10 s."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b12",
+      "group": "motor-side-cable-swap",
+      "slice": "zh_no_code",
+      "query": "变频器电机侧短路或接地故障时，要排除进线电缆跟电机电缆接反吗？",
+      "evidence": [
+        [
+          [
+            "F07807",
+            "remedy",
+            882,
+            "rule-out interchanged line and motor cables."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b13",
+      "group": "negative-overspeed-formula",
+      "slice": "zh_no_code",
+      "query": "电机反向超速保护的最大允许反向转速怎么计算？",
+      "evidence": [
+        [
+          [
+            "F07901",
+            "cause",
+            886,
+            "Maximum (-p1082, CI: 1088) - p2162"
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b14",
+      "group": "torque-speed-low-encoder",
+      "slice": "zh_no_code",
+      "query": "转矩或转速偏低报警的第二种判据，比较的是外接编码器与哪路转速？",
+      "evidence": [
+        [
+          [
+            "A07920",
+            "cause",
+            887,
+            "The speed signal from the external encoder (refer to p3230) deviates from the speed (r2169) (too low)."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b15",
+      "group": "identification-alarm-timing",
+      "slice": "zh_no_code",
+      "query": "电机数据辨识还没做的报警，G120 退出调试或刚上电会检查吗？",
+      "evidence": [
+        [
+          [
+            "A07994",
+            "cause",
+            898,
+            "For SINAMICS G120, a check is made and the alarm is output also when exiting commissioning and when the system powers up."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b16",
+      "group": "profinet-plc-stop",
+      "slice": "zh_no_code",
+      "query": "PROFINET 给定超时，PLC 切到停止状态本身是文档列的原因吗？",
+      "evidence": [
+        [
+          [
+            "F08501",
+            "cause",
+            898,
+            "controller set into the STOP state."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b17",
+      "group": "heatsink-sensor-wire",
+      "slice": "zh_no_code",
+      "query": "散热片温度传感器断线故障，具体是功率单元哪处连接断了？",
+      "evidence": [
+        [
+          [
+            "F30012",
+            "cause",
+            906,
+            "The connection to a heat sink temperature sensor in the power unit is interrupted."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b18",
+      "group": "uf-phase-zero-amps",
+      "slice": "zh_no_code",
+      "query": "电机明明接对了，开环 U/f 失速时其中一相为何可能量到 0 A？",
+      "evidence": [
+        [
+          [
+            "F30015",
+            "cause",
+            907,
+            "a current of 0 A is possibly measured in one phase due to asymmetry of the currents."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b19",
+      "group": "ground-fault-brake-resistor",
+      "slice": "zh_no_code",
+      "query": "功率单元报接地故障，制动电阻短接也可能触发吗？",
+      "evidence": [
+        [
+          [
+            "F30021",
+            "cause",
+            908,
+            "short-circuit at the braking resistor."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b20",
+      "group": "dc-precharge-cycle-heat",
+      "slice": "zh_no_code",
+      "query": "直流母线预充电超时，短时间预充次数太多会让什么过热？",
+      "evidence": [
+        [
+          [
+            "F30027",
+            "cause",
+            911,
+            "The precharging resistors are overheated as there were too many precharging operations per time unit."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b21",
+      "group": "internal-heat-ack-delta",
+      "slice": "zh_no_code",
+      "query": "变频器内部超温故障，温度需要低于允许上限多少才能确认？",
+      "evidence": [
+        [
+          [
+            "F30036",
+            "remedy",
+            914,
+            "the permissible temperature limit minus 5 K has been fallen below."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "b22",
+      "group": "internal-fan-remedy",
+      "slice": "zh_no_code",
+      "query": "功率单元内部风扇自身故障时，手册的处理方式是什么？",
+      "evidence": [
+        [
+          [
+            "F30059",
+            "remedy",
+            916,
+            "Check the internal fan and replace if necessary."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "n01",
+      "group": "precharge-warranty",
+      "slice": "hard_negative",
+      "query": "预充电电阻过热烧坏后，厂家的保修期限是几年？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n02",
+      "group": "profinet-field-ip",
+      "slice": "hard_negative",
+      "query": "PROFINET 给定超时，能从列表查出我车间 PLC 的实际 IP 地址吗？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n03",
+      "group": "replacement-stock",
+      "slice": "hard_negative",
+      "query": "直流母线预充电板在我们库房里还有几件库存？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n04",
+      "group": "downtime-loss",
+      "slice": "hard_negative",
+      "query": "功率单元过流停机时，我厂这次的产量损失是多少？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n05",
+      "group": "fan-replacement-sla",
+      "slice": "hard_negative",
+      "query": "内部风扇坏了，供应商承诺多长时间能到场换件？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n06",
+      "group": "alarm-field-timestamp",
+      "slice": "hard_negative",
+      "query": "电机温度传感器报警在昨晚的实际触发时间是几点？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n07",
+      "group": "drive-field-ip-rating",
+      "slice": "hard_negative",
+      "query": "机柜温度过高时从这条故障能否查出现场整柜的 IP 防护等级？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n08",
+      "group": "control-plc-password",
+      "slice": "hard_negative",
+      "query": "主控生命信号中断后，公司 PC 上维护账号的登录密码是多少？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n09",
+      "group": "maintenance-appointment",
+      "slice": "hard_negative",
+      "query": "电机电缆接地报警了，手册能给我查下周一的预约排班吗？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "n10",
+      "group": "igbt-market-price",
+      "slice": "hard_negative",
+      "query": "IGBT 模块断线是手册列的原因，但今天的市场报价是多少元？",
+      "status": "no_results"
+    },
+    {
+      "split": "blind",
+      "id": "x01",
+      "group": "lookup-dc-boundary",
+      "slice": "lookup",
+      "evidence": [
+        [
+          [
+            "F30003",
+            "title",
+            905,
+            "DC link voltage undervoltage"
+          ]
+        ]
+      ],
+      "tool": "lookup_drive_code",
+      "args": {
+        "code": "F30003"
+      }
+    },
+    {
+      "split": "blind",
+      "id": "x02",
+      "group": "lookup-restart",
+      "slice": "lookup",
+      "evidence": [
+        [
+          [
+            "F07320",
+            "title",
+            875,
+            "Automatic restart interrupted"
+          ]
+        ]
+      ],
+      "tool": "lookup_drive_code",
+      "args": {
+        "code": "F07320"
+      }
+    },
+    {
+      "split": "blind",
+      "id": "x03",
+      "group": "parameter-save-poweron",
+      "slice": "parameter",
+      "query": "p0971 在这份故障列表里是做什么用的？",
+      "evidence": [
+        [
+          [
+            "F01040",
+            "remedy",
+            826,
+            "Save parameters (p0971)."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "x04",
+      "group": "heatsink-sensor-wire",
+      "slice": "compare",
+      "query": "比较 F30012 与 F30013，传感器连接是断开还是短路？",
+      "evidence": [
+        [
+          [
+            "F30012",
+            "cause",
+            906,
+            "The connection to a heat sink temperature sensor in the power unit is interrupted."
+          ]
+        ],
+        [
+          [
+            "F30013",
+            "cause",
+            907,
+            "The heat sink temperature sensor in the power unit is short-circuited."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "blind",
+      "id": "x05",
+      "group": "wrong-edition",
+      "slice": "scope",
+      "query": "功率单元过流有哪些原因？",
+      "status": "version_not_applicable",
+      "args": {
+        "edition": "01/1999"
+      }
+    },
+    {
+      "split": "blind",
+      "id": "x06",
+      "group": "wrong-code-arg",
+      "slice": "scope",
+      "query": "F30003 为什么会发生？",
+      "status": "ambiguous_code",
+      "args": {
+        "code": "F30002"
+      }
+    },
+    {
+      "split": "dev",
+      "id": "d201",
+      "group": "inverter-heat-sink-alarm-to-fault",
+      "slice": "zh_no_code",
+      "query": "变频器散热器过温预警后，热沉温度超过门槛会转成故障吗？",
+      "evidence": [
+        [
+          [
+            "A05000",
+            "cause",
+            868,
+            "If the heat sink temperature exceeds the value set in p0292[0], then fault F30004 is output."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "dev",
+      "id": "d202",
+      "group": "optical-gate-fault",
+      "slice": "zh_no_code",
+      "query": "半导体集电极发射极电压监视动作后，光纤断掉是可能原因吗？",
+      "evidence": [
+        [
+          [
+            "F30022",
+            "cause",
+            909,
+            "fiber-optic cable interrupted."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "dev",
+      "id": "d203",
+      "group": "optical-gate-fault",
+      "slice": "en",
+      "query": "Can an interrupted fiber-optic cable trigger collector-emitter voltage monitoring?",
+      "evidence": [
+        [
+          [
+            "F30022",
+            "cause",
+            909,
+            "fiber-optic cable interrupted."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "dev",
+      "id": "d204",
+      "group": "motor-overcurrent-short-up",
+      "slice": "zh_no_code",
+      "query": "U/f 电机过流，有没有可能是起动加速斜坡设得太短？",
+      "evidence": [
+        [
+          [
+            "F07801",
+            "cause",
+            881,
+            "U/f operation: Up ramp was set too short or the load is too high."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "dev",
+      "id": "d205",
+      "group": "chip-heat-ack",
+      "slice": "zh_no_code",
+      "query": "半导体芯片过热跳闸要等哪个报警阈值以下才可确认？",
+      "evidence": [
+        [
+          [
+            "F30025",
+            "remedy",
+            910,
+            "This fault can only be acknowledged after the alarm threshold for alarm A05001 has been undershot."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "dev",
+      "id": "d206",
+      "group": "blocked-freedom-followup",
+      "slice": "en",
+      "query": "What effective torque limit values should be checked when the motor is blocked?",
+      "evidence": [
+        [
+          [
+            "F07900",
+            "remedy",
+            885,
+            "check the effective torque limit (r1538, r1539)."
+          ]
+        ]
+      ]
+    },
+    {
+      "split": "dev",
+      "id": "d207",
+      "group": "site-work-permit",
+      "slice": "hard_negative",
+      "query": "??????????????????????",
+      "status": "no_results"
+    },
+    {
+      "split": "dev",
+      "id": "d208",
+      "group": "repair-address",
+      "slice": "hard_negative",
+      "query": "电机发生过流后，我所在城市的官方维修点地址是什么？",
+      "status": "no_results"
+    },
+    {
+      "split": "dev",
+      "id": "d209",
+      "group": "field-tool-download-checksum",
+      "slice": "hard_negative",
+      "query": "PROFINET ???????????????? SHA-256 ???????",
+      "status": "no_results"
+    },
+    {
+      "split": "dev",
+      "id": "d210",
+      "group": "unsupported-family",
+      "slice": "scope",
+      "query": "查母线过压原因",
+      "status": "unsupported_series",
+      "args": {
+        "device_series": "G999"
+      }
+    }
+  ]
+}

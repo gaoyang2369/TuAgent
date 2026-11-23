@@ -1,0 +1,61 @@
+{
+  "protocol_sha256": "1d83b55c469965b1f5d73cfc9a8bb5256156a60025a448b644b086df711df53c",
+  "dataset_sha256": "3d453808b0a32be2dc32712a049aaa1b0f3a7bbcd7d1d9e8b1f6df43cd4da453",
+  "sources": {
+    "src/tuagent/manual/__init__.py": "b7a557584e77bfc20c0aabcbe51835fa87496340369dada68748c878617fdcbc",
+    "src/tuagent/manual/contracts.py": "32c362c83feafc7e1cdb597205b8d4d0f2cb029335542f3e80b74d624f94974e",
+    "src/tuagent/manual/evidence.py": "923d83ea5cf2bf769b77a5d6cf0bd212f3f6dc8373ad7a716d4c9c69f8f0c96c",
+    "src/tuagent/manual/evidence_services.py": "573e79e89b0272be3799749802fda70935735e43957e2c5bc7b07b4e752451aa",
+    "src/tuagent/manual/importer.py": "5bb81cc657c645d52be8214bc40c95d6dce1159cea39dcf1d2f3cdc6ca5fce5b",
+    "src/tuagent/manual/index.py": "0612d230830f4eba3a2de4a2421f216e291bd865535395d1565a9c75d3827aa5",
+    "src/tuagent/manual/parser.py": "111320a32ad8b7f4534b15531fc499515fca85492abadd932bd10c48411d092c",
+    "src/tuagent/manual/retrieval.py": "d9af1d5f5ca09c8da39d7823d51b73ab0c57098692da02b3bf6e3d18c60898ca",
+    "src/tuagent/manual/tools.py": "a1e9ec3bdca9df71294e98d6029d98a2c02982b725d5652409afbc9ee5d1c7a1",
+    "src/tuagent/manual/vectors.py": "3234d69496833a36bc8b9c35f6bec2fd98e76226776c1b4d5cc85bec740681e5",
+    "tests/manual_eval/evaluate.py": "e03dda8ad10f94822768f6406bb0dfa8388ca6b86af70ae07b5e738c3e79834d",
+    "tests/manual_eval/evaluate_v2.py": "dc23eb4f8a5aec9cab8c6a0bd3b37b91dc32af82a937a4f65890f8a4fd98e2f7"
+  },
+  "settings": {
+    "depth": 20,
+    "min_anchors": 2,
+    "ollama_url": "http://10.108.13.254:11434",
+    "embedding_model": "qwen3-embedding:8b",
+    "embedding_timeout": 10.0,
+    "embedding_threads": 24,
+    "rewrite_model": "glm-4.7-flash-46k:latest",
+    "rewrite_timeout": 15,
+    "rerank_url": "http://127.0.0.1:18085",
+    "rerank_model": "qwen3-reranker-22c9979ce4fbcdc5acdc310c6641c32797eff1aa980b8f7a2db8a8ea23429a48",
+    "rerank_timeout": 20.0
+  },
+  "arms": [
+    "default",
+    "frozen_rrf",
+    "rules_window",
+    "rules_items",
+    "fusion",
+    "fixed_terms",
+    "fixed_english_vector",
+    "rerank",
+    "fixed_and_rerank"
+  ],
+  "legacy_rrf": {
+    "depth": 12,
+    "rrf_k": 20,
+    "vector_weight": 1.5,
+    "vector_min_similarity": 0.7,
+    "rrf_min_similarity": 0.75
+  },
+  "models": {
+    "model": "qwen3-embedding:8b",
+    "digest": "64b933495768fbd3b87c20583d379728a07471e0c66733a9df87cd1901b3c44b",
+    "matrix_sha256": "48765a3db2a941669664efe00a54a28b5ea04b4c3dc1de38cb37999d78fadbed",
+    "document_template": "Code: {code}\nTitle: {title}\nSection: {kind}\n{text}",
+    "query_template": "Instruct: Given a question about a SINAMICS drive, retrieve the English manual passages that directly answer it with the relevant fault or alarm condition, cause, diagnostic value, or remedy.\nQuery: {query}",
+    "corpus_sha256": "3f37d793f726b4d229dc362a0f340dd2853ab3d16184a828bfd4e5e2a52a79b3",
+    "reranker_binary_sha256": "0ff386f7c83acbfa7e1a8af56e22146a098910fd159d90ab914685f485cd6ed4",
+    "reranker_weights_sha256": "22c9979ce4fbcdc5acdc310c6641c32797eff1aa980b8f7a2db8a8ea23429a48",
+    "reranker_slots": 12,
+    "reranker_context_per_slot": 2048
+  }
+}

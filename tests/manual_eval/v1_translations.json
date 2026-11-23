@@ -1,0 +1,11 @@
+{
+  "H01": "The three incoming phases are unbalanced and there is a lot of ripple on the DC side. What might cause this?",
+  "H03": "The motor isn't jammed, but its speed keeps rising and falling and the speed controller output keeps hitting its limit. Could this trigger stall protection?",
+  "H04": "There is no temperature probe. Can a high motor temperature warning be triggered solely by an internal temperature estimate crossing the warning level?",
+  "H05": "The motor is above the warning level but still below the trip temperature. Will the temperature protection wait until the timer has run out before stopping it?",
+  "H07": "One of the incoming phases seems to be missing at the rectifier. Which fuses in the three-phase main circuit should be checked first?",
+  "H08": "When the incoming voltage drops below its allowable level, what drive fault concerns the DC link?",
+  "H09": "The heat sink is too hot and the fan inside may have stopped. What should be checked for this trip?",
+  "H10": "If the module repeatedly fails to finish its startup, does it next start with the old configuration or the factory settings?",
+  "H25": "The drive is not slowing down. Can a high AC supply voltage alone trip the drive's DC-side voltage protection?"
+}

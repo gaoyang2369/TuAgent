@@ -132,6 +132,7 @@ async def _verify(
     index_dir: Path,
     vector_mode=None,
     vector_query="刹车时直流侧电压往上窜，手册列了哪些原因？",
+    evidence_v2=False,
 ) -> dict:
     original = _original(pdf_path)
     calls = [
@@ -262,10 +263,32 @@ async def _verify(
             "vector_agent_F30002_cause_rank": ranks[0],
             "vector_agent_F30002_cause_page": 905,
         }
+    evidence_result = {}
+    if evidence_v2:
+        question = "Can overly long power cables cause an overcurrent trip?"
+        (hit, *_) = (
+            await _agent(
+                index_dir,
+                [_call("evidence", "search_manual", query=question, limit=5)],
+                mode="evidence_rules",
+            )
+        )["evidence"]["hits"]
+        original_904 = re.split(
+            r"^F30002\b", original.pages[904], maxsplit=1, flags=re.M
+        )[0]
+        assert hit["code"] == "F30001" and hit["kind"] == "cause"
+        assert hit["excerpt"] == "power cables exceed the maximum permissible length."
+        _check_reference(hit["reference"], 904)
+        assert _on_original(hit["excerpt"], original_904)
+        assert hit["applicability"]["status"] == "matches_supplied_scope"
+        evidence_result = {
+            "H11_model_visible_item": hit["excerpt"],
+            "H11_pdf_page": 904,
+        }
     return {
         "status": "passed",
         "sha256": SHA256,
-        "agent_round_trip_calls": len(calls) + 1 + bool(vector_mode),
+        "agent_round_trip_calls": len(calls) + 1 + bool(vector_mode) + evidence_v2,
         "codes": codes,
         "F30002_remedy_pdf_page": remedy["reference"]["pdf_page"],
         "F30002_stops_before_F30003": True,
@@ -276,6 +299,7 @@ async def _verify(
         "fallback": fallback["retrieval_mode"],
         "simulator_applicability": results["simulator"]["applicability"]["status"],
         **vector_result,
+        **evidence_result,
     }
 
 
@@ -284,6 +308,7 @@ if __name__ == "__main__":
     parser.add_argument("--pdf", type=Path, required=True)
     parser.add_argument("--index-dir", type=Path, required=True)
     parser.add_argument("--vector-mode", choices=("vector", "rrf"))
+    parser.add_argument("--evidence-v2", action="store_true")
     parser.add_argument(
         "--vector-query", default="刹车时直流侧电压往上窜，手册列了哪些原因？"
     )
@@ -293,7 +318,11 @@ if __name__ == "__main__":
             json.dumps(
                 asyncio.run(
                     _verify(
-                        args.pdf, args.index_dir, args.vector_mode, args.vector_query
+                        args.pdf,
+                        args.index_dir,
+                        args.vector_mode,
+                        args.vector_query,
+                        args.evidence_v2,
                     )
                 ),
                 ensure_ascii=True,

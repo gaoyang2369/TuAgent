@@ -1,7 +1,9 @@
 import asyncio
 import json
+import math
 import re
 import sqlite3
+import time
 from collections import defaultdict
 from itertools import zip_longest
 from pathlib import Path
@@ -10,6 +12,13 @@ from urllib.parse import urlsplit, urlunsplit
 
 from ..tools import ToolContext, ToolOutput, ToolRegistry
 from .contracts import LookupArgs, ManualScope, SearchArgs, clean
+from .evidence import (
+    EvidenceOptions,
+    EvidenceRulePlan,
+    EvidenceServiceError,
+    QuestionEvidence,
+    select_evidence,
+)
 from .index import (
     IndexedManual,
     ManualIndexError,
@@ -280,6 +289,20 @@ def _hit(item, args: SearchArgs, plan: SearchPlan) -> dict:
     }
 
 
+def _trace_rank(items: Ranked, depth: int) -> list[dict]:
+    return [
+        {
+            "passage_id": passage_key(manual, row),
+            "code": row["code"],
+            "kind": row["kind"],
+            "pdf_page": row["page"],
+            "rank": rank,
+            "score": round(score, 8),
+        }
+        for rank, (score, manual, row) in enumerate(items[:depth], 1)
+    ]
+
+
 def _output(
     result: dict, *, is_error: bool = False, diagnostics: dict | None = None
 ) -> ToolOutput:
@@ -322,11 +345,15 @@ class _ManualTools:
         embedder: Embedder | None,
         fallback_to_rules: bool,
         ranking: RankingOptions,
+        evidence: EvidenceOptions,
+        trace_candidates: bool,
     ) -> None:
         self.index_dir = index_dir
         self.mode = mode
         self.fallback_to_rules = fallback_to_rules
         self.ranking = ranking
+        self.evidence = evidence
+        self.trace_candidates = trace_candidates
         self.vectors = VectorSearch(index_dir, embedder)
 
     def _mode(
@@ -376,6 +403,8 @@ class _ManualTools:
                     self._mode(), "An explicit code is absent from the scoped manuals."
                 )
             )
+        if self.mode in {"evidence_rules", "evidence_rrf"}:
+            return self._search_evidence(db, manuals, applicable, args, codes, query)
         plan = SearchPlan(
             query,
             self.mode != "keyword_only",
@@ -389,7 +418,11 @@ class _ManualTools:
             else []
         )
         ranked = rules
-        diagnostics = None
+        diagnostics = (
+            {"rules": [_trace_rank(group, 20) for group in rules]}
+            if self.trace_candidates
+            else None
+        )
         if self.mode in {"vector", "rrf"}:
             try:
                 vectors = self.vectors.rank(
@@ -406,6 +439,7 @@ class _ManualTools:
                             "message": str(exc),
                         },
                         is_error=True,
+                        diagnostics=diagnostics,
                     )
                 base = {
                     **self._mode("hybrid_concepts", exc.reason),
@@ -418,6 +452,7 @@ class _ManualTools:
             else:
                 groups = _group_vectors(vectors, codes)
                 diagnostics = {
+                    **(diagnostics or {}),
                     "vector_candidates": [
                         {
                             **_hit(item, args, plan),
@@ -427,6 +462,8 @@ class _ManualTools:
                         for item in group[:5]
                     ],
                 }
+                if self.trace_candidates:
+                    diagnostics["vector"] = [_trace_rank(group, 20) for group in groups]
                 if self.mode == "vector":
                     ranked = [
                         [
@@ -457,6 +494,211 @@ class _ManualTools:
                 "hits": hits,
             },
             diagnostics=diagnostics,
+        )
+
+    def _search_evidence(
+        self,
+        db: sqlite3.Connection,
+        manuals: list[IndexedManual],
+        applicable: list[IndexedManual],
+        args: SearchArgs,
+        codes: tuple[str, ...],
+        query: str,
+    ) -> ToolOutput:
+        options = self.evidence
+        question = QuestionEvidence(query)
+        phases: dict = {
+            "rewrite": {"status": "disabled"},
+            "requests": {},
+            "stage_ms": {},
+        }
+        failures = {}
+        hybrid = self.mode == "evidence_rrf"
+
+        def measured(name, action):
+            phases["requests"][name] = phases["requests"].get(name, 0) + 1
+            start = time.perf_counter()
+            try:
+                return action()
+            except (VectorError, EvidenceServiceError) as error:
+                failures[name] = error.reason
+                return None
+            finally:
+                elapsed = (time.perf_counter() - start) * 1000
+                phases["stage_ms"][name] = round(
+                    phases["stage_ms"].get(name, 0) + elapsed, 3
+                )
+
+        rewrite = None
+        if hybrid and options.rewrite != "none":
+            phases["rewrite"] = {
+                "status": "skipped_scope" if codes else "skipped_preservation"
+            }
+            projection = None if codes else question.fixed_rewrite()
+            if projection:
+                candidate = (
+                    projection
+                    if options.rewriter is None
+                    else measured(
+                        "rewrite",
+                        lambda: options.rewriter.rewrite(args.query, question.terms),
+                    )
+                )
+                if candidate and question.validate_rewrite(candidate):
+                    rewrite = candidate
+                    phases["rewrite"] = {"status": "applied", "query": rewrite}
+                else:
+                    phases["rewrite"] = {
+                        "status": "service_failure"
+                        if "rewrite" in failures
+                        else "drift",
+                        "query": candidate,
+                        "used_original": "rewrite" not in failures or options.fallback,
+                    }
+
+        match_codes = codes or (None,)
+        depth = options.depth
+        original_plan = EvidenceRulePlan(question, bool(codes), len(codes) > 1)
+        rule_groups = [
+            _rule_rank(db, applicable, code, original_plan) for code in match_codes
+        ]
+        phases["rules_original"] = [_trace_rank(group, depth) for group in rule_groups]
+        if rewrite:
+            rewritten_plan = EvidenceRulePlan(
+                question, bool(codes), len(codes) > 1, rewrite
+            )
+            rule_groups = [
+                _rule_rank(db, applicable, code, rewritten_plan) for code in match_codes
+            ]
+        phases["rules"] = [_trace_rank(group, depth) for group in rule_groups]
+
+        ranked = [group[:depth] for group in rule_groups]
+        if hybrid:
+            documents = corpus(db, manuals)
+            manual_ids = {manual.id for manual in applicable}
+            vectors = measured(
+                "embedding",
+                lambda: self.vectors.rank(documents, manual_ids, codes, args.query),
+            )
+            vector_groups = _group_vectors(vectors or [], codes)
+            phases["vector"] = [_trace_rank(group, depth) for group in vector_groups]
+            if options.english_vector and rewrite and vectors is not None:
+                english = measured(
+                    "english_embedding",
+                    lambda: self.vectors.rank(documents, manual_ids, codes, rewrite),
+                )
+                english_groups = _group_vectors(english or [], codes)
+                phases["english_vector"] = [
+                    _trace_rank(group, depth) for group in english_groups
+                ]
+                bilingual = RankingOptions(depth=depth, rrf_k=20, vector_weight=1)
+                vector_groups = [
+                    _rrf(original, translated, bilingual)
+                    for original, translated in zip(
+                        vector_groups, english_groups, strict=True
+                    )
+                ]
+            fusion = RankingOptions(depth=depth, rrf_k=20, vector_weight=1)
+            ranked = [
+                _rrf(rule_group, vector_group, fusion)
+                for rule_group, vector_group in zip(
+                    rule_groups, vector_groups, strict=True
+                )
+            ]
+            phases["fused"] = [_trace_rank(group, len(group)) for group in ranked]
+        if options.reranker is not None and any(ranked):
+            flat = [item for group in ranked for item in group]
+
+            def rerank():
+                scores = options.reranker.score(
+                    args.query,
+                    [
+                        f"{row['title']}\n{row['kind']}\n{row['text']}"
+                        for _, _, row in flat
+                    ],
+                )
+                if len(scores) != len(flat) or not all(
+                    math.isfinite(score) for score in scores
+                ):
+                    raise EvidenceServiceError("rerank_invalid_response")
+                return iter(scores)
+
+            scores = measured("rerank", rerank)
+            if scores is not None:
+                ranked = [
+                    sorted(
+                        ((next(scores), manual, row) for _, manual, row in group),
+                        key=lambda item: -item[0],
+                    )
+                    for group in ranked
+                ]
+                phases["reranked"] = [
+                    _trace_rank(group, len(group)) for group in ranked
+                ]
+
+        phases["failures"] = failures
+        base = self._mode(self.mode)
+        if failures:
+            if not options.fallback:
+                return _output(
+                    {
+                        **self._mode(),
+                        "status": "evidence_unavailable",
+                        "hits": [],
+                        "service_errors": failures,
+                    },
+                    is_error=True,
+                    diagnostics=phases,
+                )
+            base = self._mode(
+                self.mode if "embedding" not in failures else "evidence_rules",
+                next(iter(failures.values())),
+            )
+        accepted = []
+        decisions = []
+        for group in ranked:
+            group_hits = []
+            for rank, item in enumerate(group, 1):
+                _, manual, row = item
+                excerpt, reason = select_evidence(
+                    question,
+                    row["title"],
+                    row["code"],
+                    row["kind"],
+                    row["text"],
+                    scoped=bool(codes),
+                    min_anchors=options.min_anchors,
+                )
+                decisions.append(
+                    {
+                        "passage_id": passage_key(manual, row),
+                        "rank": rank,
+                        "code": row["code"],
+                        "kind": row["kind"],
+                        "pdf_page": row["page"],
+                        "decision": reason,
+                    }
+                )
+                if excerpt is not None:
+                    hit = _hit(item, args, original_plan)
+                    if options.complete_excerpts:
+                        hit["excerpt"] = excerpt
+                    group_hits.append(hit)
+            accepted.append(group_hits)
+        phases["decisions"] = decisions
+        if not all(accepted):
+            return _output(_no_results(base), diagnostics=phases)
+        hits = (
+            hit for slots in zip_longest(*accepted) for hit in slots if hit is not None
+        )
+        return _output(
+            {
+                **base,
+                "status": "ok",
+                "matching_passages": sum(map(len, accepted)),
+                "hits": [hit for _, hit in zip(range(args.limit), hits)],
+            },
+            diagnostics=phases,
         )
 
     def _read(self, args: LookupArgs | SearchArgs) -> ToolOutput:
@@ -516,15 +758,36 @@ def register_manual_tools(
     embedder: Embedder | None = None,
     fallback_to_rules: bool = False,
     ranking: RankingOptions = RankingOptions(),
+    evidence: EvidenceOptions = EvidenceOptions(),
+    trace_candidates: bool = False,
 ) -> None:
     """Register read-only manual tools. The PDF and index paths stay in the application."""
     if mode is None:
         mode = "hybrid_concepts" if semantic else "keyword_only"
-    if mode not in {"hybrid_concepts", "keyword_only", "vector", "rrf"}:
+    if mode not in {
+        "hybrid_concepts",
+        "keyword_only",
+        "vector",
+        "rrf",
+        "evidence_rules",
+        "evidence_rrf",
+    }:
         raise ValueError("Unknown manual retrieval mode")
     if not semantic and mode != "keyword_only":
         raise ValueError("semantic=False requires keyword_only")
-    tools = _ManualTools(Path(index_dir), mode, embedder, fallback_to_rules, ranking)
+    if mode != "evidence_rrf" and (
+        evidence.rewrite != "none" or evidence.reranker is not None
+    ):
+        raise ValueError("Rewrite and reranking require evidence_rrf")
+    tools = _ManualTools(
+        Path(index_dir),
+        mode,
+        embedder,
+        fallback_to_rules,
+        ranking,
+        evidence,
+        trace_candidates,
+    )
     registry.register(
         "lookup_drive_code",
         "Look up a complete SINAMICS fault or alarm code, including the F/A prefix and leading zeros. "

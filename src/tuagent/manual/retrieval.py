@@ -52,7 +52,9 @@ _COMPARISON = re.compile(
 )
 _CODE_CONDITION = re.compile(r"门槛|判据|阈值|怎么触发|如何触发|\bthresholds?\b", re.I)
 
-RetrievalMode = Literal["hybrid_concepts", "keyword_only", "vector", "rrf"]
+RetrievalMode = Literal[
+    "hybrid_concepts", "keyword_only", "vector", "rrf", "evidence_rules", "evidence_rrf"
+]
 
 
 @dataclass(frozen=True)

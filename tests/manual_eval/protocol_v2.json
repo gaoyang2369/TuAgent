@@ -1,0 +1,38 @@
+{
+  "version": "g120-evidence-v2",
+  "dataset_sha256_lf": "3d453808b0a32be2dc32712a049aaa1b0f3a7bbcd7d1d9e8b1f6df43cd4da453",
+  "pdf_sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+  "corpus_sha256": "3f37d793f726b4d229dc362a0f340dd2853ab3d16184a828bfd4e5e2a52a79b3",
+  "matrix_sha256": "48765a3db2a941669664efe00a54a28b5ea04b4c3dc1de38cb37999d78fadbed",
+  "embedding_model": "qwen3-embedding:8b",
+  "embedding_digest": "64b933495768fbd3b87c20583d379728a07471e0c66733a9df87cd1901b3c44b",
+  "candidate_depths": [20, 40],
+  "candidate_hit_budget": 20,
+  "visible_hits": 5,
+  "max_excerpt_words": 24,
+  "max_excerpt_characters": 280,
+  "warmup_requests_per_arm": 1,
+  "fallback_in_formal_benchmark": false,
+  "selection_order": [
+    "fewest hard-negative false hits",
+    "most model-visible evidence-supported Chinese no-code answers",
+    "most model-visible evidence-supported answers across the development split",
+    "least service time and fewer backend requests on ties"
+  ],
+  "default_change_budget": {
+    "min_chinese_supported_net_gain": 3,
+    "max_hard_negative_false_hits": 1,
+    "max_hard_negative_false_hits_vs_default": 0,
+    "max_p95_ms_including_failures": 2500,
+    "min_search_completion_fraction": 0.95
+  },
+  "counting": {
+    "candidate_hit": "Every required evidence group has a verified passage ID in the first 20 of at least one route, before refusal. Report each original route and their union.",
+    "final_hit": "Each required evidence group has a verified passage ID in the indicated prefix of ToolOutput.content.",
+    "support": "The actual ToolOutput.content contains a complete PDF-verified evidence substring for every group in the top five.",
+    "wrong_code_and_page": "Count separately when the first returned hit has a code outside the label set or a labeled code on an unaccepted PDF page. Also report any such hit in the top five.",
+    "false_accept": "Any evidence returned to a hard negative. Report completed and attempted denominators.",
+    "false_refusal": "no_results on a completed answerable call. Wrong evidence and infrastructure errors are separately countable.",
+    "latency": "One warmup per arm, fixed sequential question order, nearest-rank P50 and P95 over all attempted search calls including timeouts; exclude warmup and exact lookups. No cross-question vector or rewrite cache."
+  }
+}
