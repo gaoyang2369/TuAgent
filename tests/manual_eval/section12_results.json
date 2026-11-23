@@ -1,0 +1,1135 @@
+{
+  "questions_sha256_lf": "e7c1abbd0af01dd9d832347b8b5e40141fac86be4ea48bfa17ac138c6bb32a5b",
+  "decision": "retain_original",
+  "runs": {
+    "original": {
+      "fusion": {
+        "warmup": {
+          "ms": 5193.819,
+          "error": true,
+          "status": "evidence_unavailable"
+        },
+        "summary": {
+          "attempted": 7,
+          "completed": 0,
+          "lookup_passed": 0,
+          "lookup_attempted": 0,
+          "zh_attempted": 4,
+          "zh_rule_hit20": 2,
+          "zh_vector_hit20": 0,
+          "zh_union_hit20": 2,
+          "zh_hit1": 0,
+          "zh_hit5": 0,
+          "zh_support5": 0,
+          "answerable": 4,
+          "hit1": 0,
+          "hit5": 0,
+          "support5": 0,
+          "false_refusal": 0,
+          "excerpt_insufficient": 0,
+          "hard_false_accept": 0,
+          "hard_attempted": 3,
+          "hard_completed": 0,
+          "wrong_code1": 0,
+          "wrong_page1": 0,
+          "wrong_code5": 0,
+          "wrong_page5": 0,
+          "scope_failures": 0,
+          "timeouts": 0,
+          "fallbacks": 0,
+          "requests": {
+            "tags": 7
+          },
+          "p50_ms": 5051.217,
+          "p95_ms": 5073.899
+        },
+        "cases": [
+          {
+            "id": "J1",
+            "query": "电机的测温探头触发评估报警，最快过多久才可能变成故障？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5048.461,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J2",
+            "query": "母线预充电太频繁的时候，手册说具体什么东西会过热？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5049.23,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J3",
+            "query": "今天我看到降速时直流母线过压，说明书列过哪些可能原因？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5055.924,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J4",
+            "query": "过电流跳闸，电缆铺得太长也有可能吗？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5073.899,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J5",
+            "query": "请报一个电机过热上门维修的费用。",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5051.217,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J6",
+            "query": "直流母线的预充电电阻，库房目前还有多少库存？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5052.156,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J7",
+            "query": "今天运行中总共发生了几次过压故障？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5039.947,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          }
+        ]
+      },
+      "rules_items": {
+        "warmup": {
+          "ms": 29.498,
+          "error": false,
+          "status": "ok"
+        },
+        "summary": {
+          "attempted": 7,
+          "completed": 7,
+          "lookup_passed": 0,
+          "lookup_attempted": 0,
+          "zh_attempted": 4,
+          "zh_rule_hit20": 2,
+          "zh_vector_hit20": 0,
+          "zh_union_hit20": 2,
+          "zh_hit1": 0,
+          "zh_hit5": 0,
+          "zh_support5": 0,
+          "answerable": 4,
+          "hit1": 0,
+          "hit5": 0,
+          "support5": 0,
+          "false_refusal": 3,
+          "excerpt_insufficient": 0,
+          "hard_false_accept": 0,
+          "hard_attempted": 3,
+          "hard_completed": 3,
+          "wrong_code1": 1,
+          "wrong_page1": 0,
+          "wrong_code5": 1,
+          "wrong_page5": 0,
+          "scope_failures": 0,
+          "timeouts": 0,
+          "fallbacks": 0,
+          "requests": {},
+          "p50_ms": 7.731,
+          "p95_ms": 27.482
+        },
+        "cases": [
+          {
+            "id": "J1",
+            "query": "电机的测温探头触发评估报警，最快过多久才可能变成故障？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 2.83,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J2",
+            "query": "母线预充电太频繁的时候，手册说具体什么东西会过热？",
+            "status": "ok",
+            "is_error": false,
+            "ms": 27.482,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": [
+              [
+                "A07400",
+                "title",
+                876,
+                "Drive: DC link voltage maximum controller active"
+              ],
+              [
+                "A07400",
+                "cause",
+                876,
+                "The DC link voltage controller has been activated because the upper switch-in threshold has been exceeded (r1242, r1282)."
+              ],
+              [
+                "A07401",
+                "title",
+                876,
+                "Drive: DC link voltage maximum controller deactivated"
+              ],
+              [
+                "A07401",
+                "cause",
+                876,
+                "The Vdc_max controller can no longer maintain the DC link voltage (r0070) below the limit value (r1242, r1282) and was therefore switched out (disabled)."
+              ],
+              [
+                "A07402",
+                "title",
+                877,
+                "Drive: DC link voltage minimum controller active"
+              ]
+            ]
+          },
+          {
+            "id": "J3",
+            "query": "今天我看到降速时直流母线过压，说明书列过哪些可能原因？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 18.629,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J4",
+            "query": "过电流跳闸，电缆铺得太长也有可能吗？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 1.566,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J5",
+            "query": "请报一个电机过热上门维修的费用。",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 7.731,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J6",
+            "query": "直流母线的预充电电阻，库房目前还有多少库存？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 15.759,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J7",
+            "query": "今天运行中总共发生了几次过压故障？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 5.834,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          }
+        ]
+      },
+      "fixed_public_candidates": [
+        {
+          "id": "b01",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b02",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b03",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 2
+        },
+        {
+          "id": "b04",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b05",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5,
+          "hits": [
+            [
+              "A07015",
+              "title",
+              871,
+              "Drive: Motor temperature sensor alarm"
+            ],
+            [
+              "A07910",
+              "cause",
+              887,
+              "KTY84/PT1000 or no sensor: The measured motor temperature or the temperature of the motor temperature model 2 has exceeded the alarm threshold (p0604)."
+            ],
+            [
+              "A07015",
+              "cross_reference",
+              871,
+              "See also: r0035 (Motor temperature), p0601 (Motor temperature sensor type), p0607 (Temperature sensor fault timer)"
+            ],
+            [
+              "F07016",
+              "title",
+              871,
+              "Drive: Motor temperature sensor fault"
+            ],
+            [
+              "A07015",
+              "cause",
+              871,
+              "An error was detected when evaluating the temperature sensor set in p0601."
+            ]
+          ]
+        },
+        {
+          "id": "b06",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 1
+        },
+        {
+          "id": "b07",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b08",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b09",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b10",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b11",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b12",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 3
+        },
+        {
+          "id": "b13",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 1
+        },
+        {
+          "id": "b14",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b15",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 2
+        },
+        {
+          "id": "b16",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 3
+        },
+        {
+          "id": "b17",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b18",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b19",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 4
+        },
+        {
+          "id": "b20",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5,
+          "hits": [
+            [
+              "F30027",
+              "remedy",
+              912,
+              "check the DC link for a ground fault or short circuit."
+            ],
+            [
+              "F30027",
+              "cause",
+              911,
+              "6) The precharging resistors are overheated as the DC link capacitance is too high."
+            ],
+            [
+              "F30027",
+              "diagnostic_value",
+              911,
+              "8: Precharging started, DC link voltage less than the minimum switch-on voltage."
+            ],
+            [
+              "F30027",
+              "title",
+              910,
+              "Power unit: Precharging DC link time monitoring"
+            ],
+            [
+              "F30002",
+              "cause",
+              905,
+              "The power unit has detected an overvoltage condition in the DC link."
+            ]
+          ]
+        },
+        {
+          "id": "b21",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b22",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n01",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n02",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n03",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n04",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n05",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n06",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n07",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n08",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n09",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n10",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        }
+      ]
+    },
+    "candidate": {
+      "fusion": {
+        "warmup": {
+          "ms": 5204.413,
+          "error": true,
+          "status": "evidence_unavailable"
+        },
+        "summary": {
+          "attempted": 7,
+          "completed": 0,
+          "lookup_passed": 0,
+          "lookup_attempted": 0,
+          "zh_attempted": 4,
+          "zh_rule_hit20": 2,
+          "zh_vector_hit20": 0,
+          "zh_union_hit20": 2,
+          "zh_hit1": 0,
+          "zh_hit5": 0,
+          "zh_support5": 0,
+          "answerable": 4,
+          "hit1": 0,
+          "hit5": 0,
+          "support5": 0,
+          "false_refusal": 0,
+          "excerpt_insufficient": 0,
+          "hard_false_accept": 0,
+          "hard_attempted": 3,
+          "hard_completed": 0,
+          "wrong_code1": 0,
+          "wrong_page1": 0,
+          "wrong_code5": 0,
+          "wrong_page5": 0,
+          "scope_failures": 0,
+          "timeouts": 0,
+          "fallbacks": 0,
+          "requests": {
+            "tags": 7
+          },
+          "p50_ms": 5043.084,
+          "p95_ms": 5055.505
+        },
+        "cases": [
+          {
+            "id": "J1",
+            "query": "电机的测温探头触发评估报警，最快过多久才可能变成故障？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5037.009,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J2",
+            "query": "母线预充电太频繁的时候，手册说具体什么东西会过热？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5044.069,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J3",
+            "query": "今天我看到降速时直流母线过压，说明书列过哪些可能原因？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5055.505,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J4",
+            "query": "过电流跳闸，电缆铺得太长也有可能吗？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5038.029,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J5",
+            "query": "请报一个电机过热上门维修的费用。",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5040.876,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J6",
+            "query": "直流母线的预充电电阻，库房目前还有多少库存？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5047.99,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          },
+          {
+            "id": "J7",
+            "query": "今天运行中总共发生了几次过压故障？",
+            "status": "evidence_unavailable",
+            "is_error": true,
+            "ms": 5043.084,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {
+              "tags": 1
+            },
+            "false_hit": false,
+            "failures": {
+              "embedding": "embedding_unavailable"
+            },
+            "visible": []
+          }
+        ]
+      },
+      "rules_items": {
+        "warmup": {
+          "ms": 34.279,
+          "error": false,
+          "status": "ok"
+        },
+        "summary": {
+          "attempted": 7,
+          "completed": 7,
+          "lookup_passed": 0,
+          "lookup_attempted": 0,
+          "zh_attempted": 4,
+          "zh_rule_hit20": 2,
+          "zh_vector_hit20": 0,
+          "zh_union_hit20": 2,
+          "zh_hit1": 2,
+          "zh_hit5": 2,
+          "zh_support5": 2,
+          "answerable": 4,
+          "hit1": 2,
+          "hit5": 2,
+          "support5": 2,
+          "false_refusal": 2,
+          "excerpt_insufficient": 0,
+          "hard_false_accept": 0,
+          "hard_attempted": 3,
+          "hard_completed": 3,
+          "wrong_code1": 0,
+          "wrong_page1": 0,
+          "wrong_code5": 1,
+          "wrong_page5": 0,
+          "scope_failures": 0,
+          "timeouts": 0,
+          "fallbacks": 0,
+          "requests": {},
+          "p50_ms": 10.861,
+          "p95_ms": 29.002
+        },
+        "cases": [
+          {
+            "id": "J1",
+            "query": "电机的测温探头触发评估报警，最快过多久才可能变成故障？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 2.052,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J2",
+            "query": "母线预充电太频繁的时候，手册说具体什么东西会过热？",
+            "status": "ok",
+            "is_error": false,
+            "ms": 13.154,
+            "support_rank": 1,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": [
+              [
+                "F30027",
+                "cause",
+                911,
+                "5) The precharging resistors are overheated as there were too many precharging operations per time unit."
+              ]
+            ]
+          },
+          {
+            "id": "J3",
+            "query": "今天我看到降速时直流母线过压，说明书列过哪些可能原因？",
+            "status": "ok",
+            "is_error": false,
+            "ms": 29.002,
+            "support_rank": 1,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": [
+              [
+                "F30002",
+                "cause",
+                905,
+                "motor regenerates too much energy."
+              ],
+              [
+                "A30502",
+                "cause",
+                919,
+                "device connection voltage too high."
+              ],
+              [
+                "A07400",
+                "cause",
+                876,
+                "The ramp-down times are automatically increased in order to maintain the DC link voltage (r0070) within the permissible limits."
+              ],
+              [
+                "A07401",
+                "cause",
+                876,
+                "the motor is permanently in the regenerative mode as a result of a load that is driving the motor."
+              ],
+              [
+                "A07402",
+                "cause",
+                877,
+                "The DC link voltage controller has been activated as the lower switch-in threshold has been undershot (r1246, r1286)."
+              ]
+            ]
+          },
+          {
+            "id": "J4",
+            "query": "过电流跳闸，电缆铺得太长也有可能吗？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 1.743,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J5",
+            "query": "请报一个电机过热上门维修的费用。",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 10.861,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J6",
+            "query": "直流母线的预充电电阻，库房目前还有多少库存？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 11.169,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          },
+          {
+            "id": "J7",
+            "query": "今天运行中总共发生了几次过压故障？",
+            "status": "no_results",
+            "is_error": false,
+            "ms": 4.728,
+            "support_rank": null,
+            "timeout": false,
+            "requests": {},
+            "false_hit": false,
+            "failures": {},
+            "visible": []
+          }
+        ]
+      },
+      "fixed_public_candidates": [
+        {
+          "id": "b01",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b02",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b03",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 2
+        },
+        {
+          "id": "b04",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b05",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 1,
+          "hits": [
+            [
+              "A07015",
+              "cause",
+              871,
+              "With the fault, the time in p0607 is started. If the fault is still present after this time has expired, then fault F07016 is output; however, at the earliest, 50 ms after alarm A07015."
+            ]
+          ]
+        },
+        {
+          "id": "b06",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 1
+        },
+        {
+          "id": "b07",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b08",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b09",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 5
+        },
+        {
+          "id": "b10",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b11",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b12",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 3
+        },
+        {
+          "id": "b13",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 1
+        },
+        {
+          "id": "b14",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b15",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 3
+        },
+        {
+          "id": "b16",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 3
+        },
+        {
+          "id": "b17",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b18",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "b19",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 4
+        },
+        {
+          "id": "b20",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 1,
+          "hits": [
+            [
+              "F30027",
+              "cause",
+              911,
+              "5) The precharging resistors are overheated as there were too many precharging operations per time unit."
+            ]
+          ]
+        },
+        {
+          "id": "b21",
+          "slice": "zh_no_code",
+          "supported": true,
+          "returned": 5
+        },
+        {
+          "id": "b22",
+          "slice": "zh_no_code",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n01",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n02",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n03",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n04",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n05",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n06",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n07",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n08",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n09",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        },
+        {
+          "id": "n10",
+          "slice": "hard_negative",
+          "supported": false,
+          "returned": 0
+        }
+      ]
+    }
+  }
+}

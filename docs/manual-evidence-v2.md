@@ -8,7 +8,9 @@ v2 保留 10 道开发题和 38 道盲测题。盲测有 22 个中文无代码�
 
 题集验哈希后，先冻结上线预算。中文无代码可见证据净增至少 3 道，硬负例误返回至多 1 道且不高于现默认，预热端到端 P95 至多 2,500 ms，检索服务完成率至少 95%。P50/P95 用最近秩法，纳入超时，排除预热和精确查码。候选 Hit@20 在拒答前计算，Top-5 支持率读取实际模型消息。可答题误拒、错码、错页和服务错误单列。[冻结口径](../tests/manual_eval/protocol_v2.json)
 
-## 实验路径
+## 历史实验路径
+
+以下九路实验使用提交 `24503d3ef6b882b13ff39b0afa06d1506e0e4c6a` 的完整源码与脚本。冻结清单与盲测逐题结果保留原版。当前的命令及本轮选句结果见[第 12 节验收记录](diagnosis/section12.md)。
 
 - `default` 和 `frozen_rrf` 复现上一阶段的规则与冻结融合。两条增加评测专用候选追踪。
 - `rules_window` 和 `rules_items` 使用同一套确定性规则修复和证据门槛。前者保留旧摘录窗口，后者选择原文完整句或列表项，用于单列摘录变化。
@@ -20,14 +22,11 @@ v2 保留 10 道开发题和 38 道盲测题。盲测有 22 个中文无代码�
 
 ## 基础复现
 
-从仓库根目录运行，索引和向量步骤见 v1 记录。下面的单题均来自已公开回归集。[安装与旧索引复用](manual-retrieval-eval.md)
+在当前分支复核已公开回归题，可复用原索引和缓存。以下输出文件使用新名字。[安装与索引](manual-retrieval-eval.md)
 
 ```powershell
-$env:OLLAMA_BASE_URL = 'http://10.108.13.254:11434'
-python -m unittest discover -s tests -v
 python tests/live_manual.py --pdf .manual/g120-cu240be-2-0223-en.pdf --index-dir .manual/index --evidence-v2
-python tests/manual_eval/evaluate_v2.py --split regression --min-anchors 2 --arms default rules_window rules_items --out .manual/v2/regression.json
-python tests/manual_eval/evaluate_v2.py --split regression --min-anchors 2 --case H07 H24 H11 D02 R02 --arms frozen_rrf fusion fixed_terms --out .manual/v2/known-cases.json
+python tests/manual_eval/evaluate_v2.py --split regression --case H07 H24 H11 D02 R02 --arms default rules_items fusion --out .manual/v2/current-regression.json
 ```
 
 回归中的 D02、H07、R02 在先融合再判定的路径中分别以 F30002 第 905 页原因、F30011 第 906 页处理和 F07900 第 885 页证据在首位通过。H24 仍为 `no_results`。H11 的 F30001 第 904 页段在原规则已命中，但旧摘录漏掉电缆长度。真实 PDF 的脚本模型在 `Agent.run` 消息里收到了完整原列表项，控制单元与固件适用性也一同返回。[Siemens 原手册第 904 页](https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=904)
@@ -40,33 +39,17 @@ python tests/manual_eval/evaluate_v2.py --split regression --min-anchors 2 --cas
 
 本地成对打分采用 ggml-org 转换的 Qwen3-Reranker-0.6B Q8_0 和 llama.cpp b12540 Vulkan。以两条原段做对照，H07 的正确保险丝段和错误过压诊断值分数分别约为 0.992 和 0.0001；H24 询问上门费用，过压诊断值分数约 0.979，仍缺少费用证据。两组相关性分数用于排序，费用原问由证据门槛拒答。[固定 GGUF 版本](https://huggingface.co/ggml-org/Qwen3-Reranker-0.6B-Q8_0-GGUF/tree/a02f48bb4f057028298c21fa033da2b30d7742d5) · [llama.cpp b12540](https://github.com/ggml-org/llama.cpp/releases/tag/b12540)
 
-以下命令复用索引和模型文件，缺失文件才下载。正式入口在运行前校验冻结清单。输出路径需为新文件。[运行清单与哈希](../tests/manual_eval/freeze_v2.json)
+历史复现时请在独立工作树中同时使用当时的 `src`、脚本和冻结清单。下列命令复用当前机器上的原始 PDF、索引、模型和 Windows Vulkan 服务程序。在当前仓库根目录照历史报告“开发选型与正式配置”启动服务，再运行盲测。[冻结运行清单](../tests/manual_eval/freeze_v2.json)
 
 ```powershell
-New-Item -ItemType Directory -Force .manual/v2 | Out-Null
-$zip = '.manual/v2/llama-vulkan.zip'
-$weights = '.manual/v2/rerank-ggml.gguf'
-$exe = '.manual/v2/llama-vulkan/llama-server.exe'
-$modelHash = '22c9979ce4fbcdc5acdc310c6641c32797eff1aa980b8f7a2db8a8ea23429a48'
-if (-not (Test-Path $exe)) {
-    curl.exe -fL -o $zip https://github.com/ggml-org/llama.cpp/releases/download/b12540/llama-b12540-bin-win-vulkan-x64.zip
-    if ($LASTEXITCODE -ne 0) { throw 'llama.cpp download failed' }
-    Expand-Archive -LiteralPath $zip -DestinationPath .manual/v2/llama-vulkan -Force
-}
-if (-not (Test-Path $weights)) {
-    curl.exe -fL -o $weights https://huggingface.co/ggml-org/Qwen3-Reranker-0.6B-Q8_0-GGUF/resolve/a02f48bb4f057028298c21fa033da2b30d7742d5/qwen3-reranker-0.6b-q8_0.gguf
-    if ($LASTEXITCODE -ne 0) { throw 'Qwen3 reranker download failed' }
-}
-if ((Get-FileHash $weights).Hash.ToLower() -ne $modelHash) { throw 'Unexpected reranker model' }
-$alias = 'qwen3-reranker-' + $modelHash
-$serverArgs = @('--model',(Resolve-Path $weights).Path,'--rerank','--ctx-size','24576','--parallel','12',
-    '--threads','6','--threads-batch','8','--batch-size','4096','--ubatch-size','2048',
-    '--device','Vulkan0','--gpu-layers','99','--host','127.0.0.1','--port','18085','--alias',$alias)
-$server = Start-Process -FilePath $exe -ArgumentList $serverArgs -WindowStyle Hidden -PassThru
-
-# Wait for http://127.0.0.1:18085/health to return {"status":"ok"}.
-python tests/manual_eval/evaluate_v2.py --split blind --reranker-binary $exe --reranker-weights $weights --out .manual/v2/blind-replay.json
+git worktree add --detach .manual/history-24503d3 24503d3ef6b882b13ff39b0afa06d1506e0e4c6a
+$archive = (Resolve-Path .manual/history-24503d3).Path
+Get-Content "$archive/docs/manual-evidence-v2.md" -Encoding utf8
+$env:PYTHONPATH = "$archive/src"
+python "$archive/tests/manual_eval/evaluate_v2.py" --split blind --index-dir .manual/index --pdf .manual/g120-cu240be-2-0223-en.pdf --reranker-binary .manual/v2/llama-vulkan/llama-server.exe --reranker-weights .manual/v2/rerank-ggml.gguf --out .manual/v2/historical-replay.json
 ```
+
+上述最后一条命令从当前仓库根目录执行，服务端加载的权重绝对路径须与参数一致。历史命令请在单独的 PowerShell 会话运行，避免后续验证误导入旧包。
 
 ## 正式盲测结果
 
@@ -115,7 +98,7 @@ from tuagent.manual import EvidenceOptions, register_manual_tools
 register_manual_tools(
     registry,
     index_dir=".manual/index",
-    mode="evidence_rrf",
+    chinese_pilot=True,
     evidence=EvidenceOptions(depth=20, min_anchors=2),
 )
 ```

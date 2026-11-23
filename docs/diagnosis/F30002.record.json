@@ -1,0 +1,2267 @@
+{
+  "model": "deepseek-flash",
+  "question": "这段时间最近一次跳闸是怎么回事",
+  "window": {
+    "table_name": "sim_f30002_overvoltage",
+    "profile_version": "g120_sim_v1",
+    "start_ms": 1795424400000,
+    "end_ms": 1795427400000,
+    "last_seconds": null
+  },
+  "status": "completed",
+  "error_code": null,
+  "receipts": [
+    {
+      "id": "call_00_qAr4qbs3KTNBGFqL3TKT2789",
+      "tool": "find_code_events",
+      "arguments": "{\"table_name\": \"sim_f30002_overvoltage\", \"start_ms\": 1795424400000, \"end_ms\": 1795427400000, \"code_field\": \"fault_code\"}",
+      "is_error": false,
+      "result": {
+        "status": "ok",
+        "source": {
+          "schema_name": "dcma",
+          "table_name": "sim_f30002_overvoltage",
+          "profile_version": "g120_sim_v1",
+          "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9",
+          "model_verification": "dictionary_consistency_only",
+          "model_verification_note": "Dictionary consistency checked; the model file was not independently verified."
+        },
+        "metadata": {
+          "fault_code": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          }
+        },
+        "read_at_ms": 1795427884160,
+        "read_at_beijing": "2026-11-23T17:58:04.160+08:00",
+        "coverage": {
+          "status": "complete",
+          "expected_points": 1000,
+          "expected_available_points": 1000,
+          "points": 1000,
+          "unique_timestamps": 1000,
+          "valid_points": {
+            "fault_code": 1000
+          },
+          "invalid_points": {
+            "fault_code": 0
+          },
+          "first_ms": 1795424400000,
+          "last_ms": 1795427397000,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:49:57.000+08:00",
+          "gap_count": 0,
+          "missing_available_points": 0,
+          "gaps": [],
+          "gaps_truncated": false,
+          "irregular_intervals": 0,
+          "unavailable_ranges": []
+        },
+        "values_are": "stored",
+        "code_field": "fault_code",
+        "target_code": null,
+        "events": [
+          {
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/fault_code/F30002/1795425009000/432042",
+            "code": "F30002",
+            "start_boundary": "observed_trigger",
+            "crosses_window_start": false,
+            "first_observed": {
+              "timestamp_ms": 1795425009000,
+              "time_beijing": "2026-11-23T17:10:09.000+08:00",
+              "id": 432042
+            },
+            "last_observed": {
+              "timestamp_ms": 1795425087000,
+              "time_beijing": "2026-11-23T17:11:27.000+08:00",
+              "id": 432068
+            },
+            "trigger": {
+              "timestamp_ms": 1795425009000,
+              "time_beijing": "2026-11-23T17:10:09.000+08:00",
+              "id": 432042
+            },
+            "clear": {
+              "timestamp_ms": 1795425090000,
+              "time_beijing": "2026-11-23T17:11:30.000+08:00",
+              "id": 432069
+            },
+            "confirmed_duration_in_window_ms": 78000,
+            "end_boundary": "observed_clear",
+            "crosses_window_end_unknown": false,
+            "observed_trigger_to_clear_ms": 81000
+          },
+          {
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/fault_code/F30002/1795426809000/432642",
+            "code": "F30002",
+            "start_boundary": "observed_trigger",
+            "crosses_window_start": false,
+            "first_observed": {
+              "timestamp_ms": 1795426809000,
+              "time_beijing": "2026-11-23T17:40:09.000+08:00",
+              "id": 432642
+            },
+            "last_observed": {
+              "timestamp_ms": 1795426887000,
+              "time_beijing": "2026-11-23T17:41:27.000+08:00",
+              "id": 432668
+            },
+            "trigger": {
+              "timestamp_ms": 1795426809000,
+              "time_beijing": "2026-11-23T17:40:09.000+08:00",
+              "id": 432642
+            },
+            "clear": {
+              "timestamp_ms": 1795426890000,
+              "time_beijing": "2026-11-23T17:41:30.000+08:00",
+              "id": 432669
+            },
+            "confirmed_duration_in_window_ms": 78000,
+            "end_boundary": "observed_clear",
+            "crosses_window_end_unknown": false,
+            "observed_trigger_to_clear_ms": 81000
+          }
+        ],
+        "event_count": 2,
+        "new_trigger_count": 2,
+        "conflicting_code_timestamps": 0,
+        "code_changes": [],
+        "code_change_count": 0,
+        "events_truncated": false,
+        "code_changes_truncated": false,
+        "duration_method": "Sum in-window intervals between adjacent samples carrying the same code.",
+        "requested_range": {
+          "start_ms": 1795424400000,
+          "end_ms": 1795427400000,
+          "start_beijing": "2026-11-23T17:00:00.000+08:00",
+          "end_beijing": "2026-11-23T17:50:00.000+08:00"
+        },
+        "metadata_view": "units_and_validity; call get_signal_metadata for full definitions",
+        "content_truncated": false
+      }
+    },
+    {
+      "id": "call_01_4wnQ5YCMjxvbRB5NvehP3536",
+      "tool": "get_signal_metadata",
+      "arguments": "{\"table_name\": \"sim_f30002_overvoltage\"}",
+      "is_error": false,
+      "result": {
+        "status": "ok",
+        "source": {
+          "schema_name": "dcma",
+          "table_name": "sim_f30002_overvoltage",
+          "profile_version": "g120_sim_v1",
+          "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9",
+          "model_verification": "dictionary_consistency_only",
+          "model_verification_note": "Dictionary consistency checked; the model file was not independently verified."
+        },
+        "metadata": {
+          "id": {
+            "field_name": "id",
+            "description": "数据库自增主键；允许有间断，不表示采样时间或累计样本数。",
+            "quantity_kind": "identifier",
+            "storage_type": "bigint(20)",
+            "is_nullable": 0,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "encoding": "integer",
+              "auto_increment": true
+            },
+            "invalid_values": [],
+            "definition_source": "dcma table schema: AUTO_INCREMENT",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "timestamp": {
+            "field_name": "timestamp",
+            "description": "Unix 毫秒时间戳，以十进制字符串保存；标识样本时刻。",
+            "quantity_kind": "epoch_time",
+            "storage_type": "varchar(50)",
+            "is_nullable": 1,
+            "stored_unit": "ms",
+            "display_unit": "ms",
+            "canonical_unit": "s",
+            "scale_factor": 0.001,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "epoch": "1970-01-01T00:00:00Z",
+              "encoding": "base10_integer_string",
+              "canonical_conversion": "先将字符串解析为数值，再乘倍率得到 Unix 秒。"
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "device_name": {
+            "field_name": "device_name",
+            "description": "模拟设备标识，不代表真实采集设备。",
+            "quantity_kind": "identifier",
+            "storage_type": "varchar(100)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "constant": "G120_SIM"
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "inverter_name": {
+            "field_name": "inverter_name",
+            "description": "模拟变频器标识，不代表真实采集设备。",
+            "quantity_kind": "identifier",
+            "storage_type": "varchar(100)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "constant": "G120_SIM"
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "date": {
+            "field_name": "date",
+            "description": "样本日期字符串。",
+            "quantity_kind": "formatted_date",
+            "storage_type": "varchar(20)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "format": "%Y/%m/%d",
+              "timezone": "Asia/Shanghai"
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "time": {
+            "field_name": "time",
+            "description": "样本时间字符串，毫秒部分固定为 000ms。",
+            "quantity_kind": "formatted_time",
+            "storage_type": "varchar(20)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "format": "%H:%M:%S 000ms",
+              "timezone": "Asia/Shanghai"
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "status": {
+            "field_name": "status",
+            "description": "模拟器运行状态枚举；原始采集表的数字枚举映射未确认。",
+            "quantity_kind": "enum",
+            "storage_type": "varchar(50)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "values": {
+                "FAULT": "故障锁存",
+                "RUNNING": "驱动使能",
+                "STOPPED": "停止或复位等待"
+              },
+              "do_not_apply_original_plc_enum": true
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "fault_code": {
+            "field_name": "fault_code",
+            "description": "故障码字符串；故障锁存时物理量可以已经回落。",
+            "quantity_kind": "code",
+            "storage_type": "varchar(50)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "latched": true,
+              "no_fault": "0",
+              "allowed_values": [
+                "0",
+                "F30002"
+              ]
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "alarm_code": {
+            "field_name": "alarm_code",
+            "description": "报警码字符串；超温场景示例使用连续温度监控报警。",
+            "quantity_kind": "code",
+            "storage_type": "varchar(50)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "no_alarm": "0",
+              "allowed_values": [
+                "0"
+              ]
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "control_word": {
+            "field_name": "control_word",
+            "description": "模拟控制字，以十进制字符串保存；沿用原样本指令形式，未核实原 PLC 映射。",
+            "quantity_kind": "bitmask",
+            "storage_type": "varchar(50)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "values": {
+                "5246": "停止请求",
+                "5247": "运行请求"
+              },
+              "encoding": "base10_integer_string",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "status_word": {
+            "field_name": "status_word",
+            "description": "简化的 PROFIdrive 示例状态字；不是已确认的现场状态字映射。",
+            "quantity_kind": "bitmask",
+            "storage_type": "varchar(50)",
+            "is_nullable": 1,
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "encoding": "base10_integer_string",
+              "base_values": {
+                "561": "0x0231 停止",
+                "567": "0x0237 运行",
+                "616": "0x0268 故障"
+              },
+              "warning_mask": 128,
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "dc_voltage": {
+            "field_name": "dc_voltage",
+            "description": "直流母线电压；约 557V 的正常基线来自原样本量级。",
+            "quantity_kind": "voltage",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "V",
+            "display_unit": "V",
+            "canonical_unit": "V",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "minimum": 0,
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "speed_setpoint": {
+            "field_name": "speed_setpoint",
+            "description": "速度指令。",
+            "quantity_kind": "rotational_speed",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "rpm",
+            "display_unit": "rpm",
+            "canonical_unit": "rpm",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "minimum": 0,
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "speed_actual": {
+            "field_name": "speed_actual",
+            "description": "实际转速；本模型只模拟非负方向，不代表设备不能反转。",
+            "quantity_kind": "rotational_speed",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "rpm",
+            "display_unit": "rpm",
+            "canonical_unit": "rpm",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "minimum": 0,
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "current_actual": {
+            "field_name": "current_actual",
+            "description": "电流幅值；由励磁与转矩电流分量的平方和开方得到。",
+            "quantity_kind": "current",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "A",
+            "display_unit": "A",
+            "canonical_unit": "A",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "formula": "sqrt(field_current^2 + torque_current^2)",
+              "minimum": 0,
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "torque_setpoint": {
+            "field_name": "torque_setpoint",
+            "description": "电磁转矩指令；单位为本模拟约定，未确认真实采集标签倍率。",
+            "quantity_kind": "torque",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "N.m",
+            "display_unit": "N·m",
+            "canonical_unit": "N.m",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "sign": "正值为正方向电动转矩，负值为制动转矩。",
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "torque_actual": {
+            "field_name": "torque_actual",
+            "description": "实际电磁转矩；原采集表长期为零，模拟值依据模型生成。",
+            "quantity_kind": "torque",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "N.m",
+            "display_unit": "N·m",
+            "canonical_unit": "N.m",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "sign": "正值为正方向电动转矩，负值为制动转矩。",
+              "formula": "torque_current * 1.7 Nm/A",
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "air_intake_temp": {
+            "field_name": "air_intake_temp",
+            "description": "人工模拟进气环境温度约 25°C；原正常表中的 -200 未作为有效基线。",
+            "quantity_kind": "temperature",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "degC",
+            "display_unit": "°C",
+            "canonical_unit": "degC",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "numeric_encoding": "float",
+              "legacy_invalid_sentinel": -200,
+              "environment_is_simulated": true,
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null,
+              -200
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "motor_temp": {
+            "field_name": "motor_temp",
+            "description": "模拟电机温度；热状态随时间演化，停机后逐步冷却。",
+            "quantity_kind": "temperature",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "degC",
+            "display_unit": "°C",
+            "canonical_unit": "degC",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "inverter_temp": {
+            "field_name": "inverter_temp",
+            "description": "模拟变频器温度，模型中等于散热器温度减 0.3°C。",
+            "quantity_kind": "temperature",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "degC",
+            "display_unit": "°C",
+            "canonical_unit": "degC",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "formula": "inverter_radiator_temp - 0.3",
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "actual_power": {
+            "field_name": "actual_power",
+            "description": "有符号轴输出功率；不是已确认的电网输入功率标签。",
+            "quantity_kind": "mechanical_power",
+            "storage_type": "float",
+            "is_nullable": 1,
+            "stored_unit": "kW",
+            "display_unit": "kW",
+            "canonical_unit": "kW",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "value_conventions": {
+              "sign": "正值为电动轴输出，负值为再生运行。",
+              "formula": "torque_actual * speed_actual / 9549.296586",
+              "numeric_encoding": "float",
+              "hardware_mapping_verified": false
+            },
+            "invalid_values": [
+              null
+            ],
+            "definition_source": "model.py#signal",
+            "scope_note": "仅适用于本条记录指定的 dcma 模拟表；不得沿用到 real_data、旧模拟表或真实设备。",
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          }
+        },
+        "read_at_ms": 1795427884837,
+        "read_at_beijing": "2026-11-23T17:58:04.837+08:00",
+        "field_names": [
+          "id",
+          "timestamp",
+          "device_name",
+          "inverter_name",
+          "date",
+          "time",
+          "status",
+          "fault_code",
+          "alarm_code",
+          "control_word",
+          "status_word",
+          "dc_voltage",
+          "speed_setpoint",
+          "speed_actual",
+          "current_actual",
+          "torque_setpoint",
+          "torque_actual",
+          "air_intake_temp",
+          "motor_temp",
+          "inverter_temp",
+          "actual_power",
+          "field_current",
+          "torque_current",
+          "system_run_time",
+          "inverter_radiator_temp",
+          "inverter_load_rate",
+          "motor_load_rate",
+          "pulse_frequency",
+          "motor_power",
+          "feedback_power",
+          "create_time",
+          "actual_solution"
+        ],
+        "content_truncated": true,
+        "follow_up": "Request a smaller list of fields."
+      }
+    },
+    {
+      "id": "call_00_k4DgOH0AOJVgeZr9UdhE1184",
+      "tool": "query_telemetry",
+      "arguments": "{\"table_name\": \"sim_f30002_overvoltage\", \"start_ms\": 1795426779000, \"end_ms\": 1795426831001, \"mode\": \"window\", \"fields\": [\"id\", \"date\", \"time\", \"fault_code\", \"status\", \"speed_setpoint\", \"speed_actual\", \"torque_actual\", \"actual_power\", \"feedback_power\", \"dc_voltage\"], \"limit\": 1000}",
+      "is_error": false,
+      "result": {
+        "status": "ok",
+        "source": {
+          "schema_name": "dcma",
+          "table_name": "sim_f30002_overvoltage",
+          "profile_version": "g120_sim_v1",
+          "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9",
+          "model_verification": "dictionary_consistency_only",
+          "model_verification_note": "Dictionary consistency checked; the model file was not independently verified."
+        },
+        "metadata": {
+          "id": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "date": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "time": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "fault_code": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "status": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "speed_setpoint": {
+            "stored_unit": "rpm",
+            "display_unit": "rpm",
+            "canonical_unit": "rpm",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "speed_actual": {
+            "stored_unit": "rpm",
+            "display_unit": "rpm",
+            "canonical_unit": "rpm",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "torque_actual": {
+            "stored_unit": "N.m",
+            "display_unit": "N·m",
+            "canonical_unit": "N.m",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "actual_power": {
+            "stored_unit": "kW",
+            "display_unit": "kW",
+            "canonical_unit": "kW",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "feedback_power": {
+            "stored_unit": "kW",
+            "display_unit": "kW",
+            "canonical_unit": "kW",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "dc_voltage": {
+            "stored_unit": "V",
+            "display_unit": "V",
+            "canonical_unit": "V",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          }
+        },
+        "read_at_ms": 1795427886253,
+        "read_at_beijing": "2026-11-23T17:58:06.253+08:00",
+        "mode": "window",
+        "window_max_id": 432649,
+        "relative_seconds": null,
+        "data": [
+          {
+            "timestamp_ms": 1795426779000,
+            "time_beijing": "2026-11-23T17:39:39.000+08:00",
+            "id": 432632,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426779000/432632",
+            "values": {
+              "id": 432632,
+              "date": "2026/11/23",
+              "time": "17:39:39 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1120.0,
+              "speed_actual": 1120.0,
+              "torque_actual": 0.80631,
+              "actual_power": 0.09457,
+              "feedback_power": 0.0,
+              "dc_voltage": 556.405
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426782000,
+            "time_beijing": "2026-11-23T17:39:42.000+08:00",
+            "id": 432633,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426782000/432633",
+            "values": {
+              "id": 432633,
+              "date": "2026/11/23",
+              "time": "17:39:42 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1160.0,
+              "speed_actual": 1160.0,
+              "torque_actual": 0.90574,
+              "actual_power": 0.11002,
+              "feedback_power": 0.0,
+              "dc_voltage": 556.675
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426785000,
+            "time_beijing": "2026-11-23T17:39:45.000+08:00",
+            "id": 432634,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426785000/432634",
+            "values": {
+              "id": 432634,
+              "date": "2026/11/23",
+              "time": "17:39:45 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1200.0,
+              "speed_actual": 1200.0,
+              "torque_actual": 0.94,
+              "actual_power": 0.11812,
+              "feedback_power": 0.0,
+              "dc_voltage": 557.0
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426788000,
+            "time_beijing": "2026-11-23T17:39:48.000+08:00",
+            "id": 432635,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426788000/432635",
+            "values": {
+              "id": 432635,
+              "date": "2026/11/23",
+              "time": "17:39:48 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1240.0,
+              "speed_actual": 1240.0,
+              "torque_actual": 0.90574,
+              "actual_power": 0.11761,
+              "feedback_power": 0.0,
+              "dc_voltage": 557.325
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426791000,
+            "time_beijing": "2026-11-23T17:39:51.000+08:00",
+            "id": 432636,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426791000/432636",
+            "values": {
+              "id": 432636,
+              "date": "2026/11/23",
+              "time": "17:39:51 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1280.0,
+              "speed_actual": 1280.0,
+              "torque_actual": 0.80631,
+              "actual_power": 0.10808,
+              "feedback_power": 0.0,
+              "dc_voltage": 557.595
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426794000,
+            "time_beijing": "2026-11-23T17:39:54.000+08:00",
+            "id": 432637,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426794000/432637",
+            "values": {
+              "id": 432637,
+              "date": "2026/11/23",
+              "time": "17:39:54 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1320.0,
+              "speed_actual": 1320.0,
+              "torque_actual": 0.65145,
+              "actual_power": 0.09005,
+              "feedback_power": 0.0,
+              "dc_voltage": 557.761
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426797000,
+            "time_beijing": "2026-11-23T17:39:57.000+08:00",
+            "id": 432638,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426797000/432638",
+            "values": {
+              "id": 432638,
+              "date": "2026/11/23",
+              "time": "17:39:57 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1360.0,
+              "speed_actual": 1360.0,
+              "torque_actual": 0.45631,
+              "actual_power": 0.06499,
+              "feedback_power": 0.0,
+              "dc_voltage": 557.796
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426800000,
+            "time_beijing": "2026-11-23T17:40:00.000+08:00",
+            "id": 432639,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426800000/432639",
+            "values": {
+              "id": 432639,
+              "date": "2026/11/23",
+              "time": "17:40:00 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 1400.0,
+              "speed_actual": 1400.0,
+              "torque_actual": -2.5,
+              "actual_power": -0.36652,
+              "feedback_power": 0.36652,
+              "dc_voltage": 557.0
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426803000,
+            "time_beijing": "2026-11-23T17:40:03.000+08:00",
+            "id": 432640,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426803000/432640",
+            "values": {
+              "id": 432640,
+              "date": "2026/11/23",
+              "time": "17:40:03 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 933.333,
+              "speed_actual": 1233.33,
+              "torque_actual": -2.5,
+              "actual_power": -0.32289,
+              "feedback_power": 0.32289,
+              "dc_voltage": 638.0
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426806000,
+            "time_beijing": "2026-11-23T17:40:06.000+08:00",
+            "id": 432641,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426806000/432641",
+            "values": {
+              "id": 432641,
+              "date": "2026/11/23",
+              "time": "17:40:06 000ms",
+              "fault_code": "0",
+              "status": "RUNNING",
+              "speed_setpoint": 466.667,
+              "speed_actual": 1066.67,
+              "torque_actual": -2.5,
+              "actual_power": -0.27925,
+              "feedback_power": 0.27925,
+              "dc_voltage": 719.0
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426809000,
+            "time_beijing": "2026-11-23T17:40:09.000+08:00",
+            "id": 432642,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426809000/432642",
+            "values": {
+              "id": 432642,
+              "date": "2026/11/23",
+              "time": "17:40:09 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 900.0,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 800.0
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426812000,
+            "time_beijing": "2026-11-23T17:40:12.000+08:00",
+            "id": 432643,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426812000/432643",
+            "values": {
+              "id": 432643,
+              "date": "2026/11/23",
+              "time": "17:40:12 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 666.736,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 690.361
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426815000,
+            "time_beijing": "2026-11-23T17:40:15.000+08:00",
+            "id": 432644,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426815000/432644",
+            "values": {
+              "id": 432644,
+              "date": "2026/11/23",
+              "time": "17:40:15 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 493.93,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 630.19
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426818000,
+            "time_beijing": "2026-11-23T17:40:18.000+08:00",
+            "id": 432645,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426818000/432645",
+            "values": {
+              "id": 432645,
+              "date": "2026/11/23",
+              "time": "17:40:18 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 365.913,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 597.168
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426821000,
+            "time_beijing": "2026-11-23T17:40:21.000+08:00",
+            "id": 432646,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426821000/432646",
+            "values": {
+              "id": 432646,
+              "date": "2026/11/23",
+              "time": "17:40:21 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 271.075,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 579.044
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426824000,
+            "time_beijing": "2026-11-23T17:40:24.000+08:00",
+            "id": 432647,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426824000/432647",
+            "values": {
+              "id": 432647,
+              "date": "2026/11/23",
+              "time": "17:40:24 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 200.817,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 569.098
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426827000,
+            "time_beijing": "2026-11-23T17:40:27.000+08:00",
+            "id": 432648,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426827000/432648",
+            "values": {
+              "id": 432648,
+              "date": "2026/11/23",
+              "time": "17:40:27 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 148.769,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 563.64
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426830000,
+            "time_beijing": "2026-11-23T17:40:30.000+08:00",
+            "id": 432649,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426830000/432649",
+            "values": {
+              "id": 432649,
+              "date": "2026/11/23",
+              "time": "17:40:30 000ms",
+              "fault_code": "F30002",
+              "status": "FAULT",
+              "speed_setpoint": 0.0,
+              "speed_actual": 110.211,
+              "torque_actual": 0.0,
+              "actual_power": 0.0,
+              "feedback_power": 0.0,
+              "dc_voltage": 560.644
+            },
+            "valid": {
+              "id": true,
+              "date": true,
+              "time": true,
+              "fault_code": true,
+              "status": true,
+              "speed_setpoint": true,
+              "speed_actual": true,
+              "torque_actual": true,
+              "actual_power": true,
+              "feedback_power": true,
+              "dc_voltage": true
+            }
+          }
+        ],
+        "values_are": "stored",
+        "coverage": {
+          "status": "complete",
+          "expected_points": 18,
+          "expected_available_points": 18,
+          "points": 18,
+          "unique_timestamps": 18,
+          "valid_points": {
+            "id": 18,
+            "date": 18,
+            "time": 18,
+            "fault_code": 18,
+            "status": 18,
+            "speed_setpoint": 18,
+            "speed_actual": 18,
+            "torque_actual": 18,
+            "actual_power": 18,
+            "feedback_power": 18,
+            "dc_voltage": 18
+          },
+          "invalid_points": {
+            "id": 0,
+            "date": 0,
+            "time": 0,
+            "fault_code": 0,
+            "status": 0,
+            "speed_setpoint": 0,
+            "speed_actual": 0,
+            "torque_actual": 0,
+            "actual_power": 0,
+            "feedback_power": 0,
+            "dc_voltage": 0
+          },
+          "first_ms": 1795426779000,
+          "last_ms": 1795426830000,
+          "first_beijing": "2026-11-23T17:39:39.000+08:00",
+          "last_beijing": "2026-11-23T17:40:30.000+08:00",
+          "gap_count": 0,
+          "missing_available_points": 0,
+          "gaps": [],
+          "gaps_truncated": false,
+          "irregular_intervals": 0,
+          "unavailable_ranges": []
+        },
+        "coverage_scope": "full_window",
+        "latest_sample_age_ms": null,
+        "page": {
+          "limit": 1000,
+          "returned_points": 18,
+          "truncated": false,
+          "first_ms": 1795426779000,
+          "last_ms": 1795426830000,
+          "next_cursor": null
+        },
+        "requested_range": {
+          "start_ms": 1795426779000,
+          "end_ms": 1795426831001,
+          "start_beijing": "2026-11-23T17:39:39.000+08:00",
+          "end_beijing": "2026-11-23T17:40:31.001+08:00"
+        },
+        "metadata_view": "units_and_validity; call get_signal_metadata for full definitions",
+        "content_truncated": false
+      }
+    },
+    {
+      "id": "call_01_dqJ8tJVyUmmsVq2AicJt9080",
+      "tool": "lookup_drive_code",
+      "arguments": "{\"device_series\": \"G120_SIM\", \"code\": \"F30002\"}",
+      "is_error": false,
+      "result": {
+        "code": "F30002",
+        "code_type": "fault",
+        "simulation": {
+          "source_type": "simulation_design",
+          "scope": "G120_SIM / g120_sim_v1",
+          "meaning": "模拟直流母线过压故障。",
+          "reference": "docs/fault-diagnosis-agent-design.md §6.2"
+        },
+        "status": "ok",
+        "meaning": "Power unit: DC link voltage overvoltage",
+        "message_flags": [],
+        "applicability": {
+          "device_series": "G120",
+          "control_units": [
+            "CU240B-2",
+            "CU240B-2_DP",
+            "CU240E-2",
+            "CU240E-2_DP",
+            "CU240E-2_DP_F",
+            "CU240E-2_F",
+            "CU240E-2_PN",
+            "CU240E-2_PN_F"
+          ],
+          "firmware_versions": [
+            "4.7 SP14"
+          ],
+          "status": "candidate_only",
+          "note": "G120_SIM has no confirmed control unit or firmware; this is a candidate manual."
+        },
+        "reference": {
+          "source_type": "manual",
+          "document_number": "A5E33839529",
+          "edition": "02/2023",
+          "language": "en-US",
+          "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+          "section": "4.2",
+          "section_title": "List of faults and alarms",
+          "pdf_page": 904,
+          "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=904"
+        },
+        "passage_pages": {
+          "title": [
+            904
+          ],
+          "message_class": [
+            904
+          ],
+          "reaction": [
+            904
+          ],
+          "acknowledge": [
+            904
+          ],
+          "cause": [
+            905
+          ],
+          "diagnostic_value": [
+            905
+          ],
+          "remedy": [
+            905
+          ],
+          "cross_reference": [
+            905
+          ]
+        }
+      }
+    },
+    {
+      "id": "call_00_nfCRoI8IpVzTkXy8eYKW3706",
+      "tool": "search_manual",
+      "arguments": "{\"device_series\": \"G120_SIM\", \"query\": \"F30002 DC link voltage overvoltage cause\", \"code\": \"F30002\", \"section\": \"Cause\", \"limit\": 4}",
+      "is_error": false,
+      "result": {
+        "retrieval_mode": "hybrid_concepts",
+        "requested_mode": "hybrid_concepts",
+        "actual_mode": null,
+        "fallback_reason": null,
+        "status": "no_results",
+        "message": "Insufficient evidence in the requested section.",
+        "hits": []
+      }
+    },
+    {
+      "id": "call_00_rz3IfSYkFiLufT1Ofu2n7908",
+      "tool": "search_manual",
+      "arguments": "{\"code\": \"F30002\", \"device_series\": \"G120_SIM\", \"limit\": 5, \"query\": \"F30002 直流母线过压 原因\"}",
+      "is_error": false,
+      "result": {
+        "retrieval_mode": "hybrid_concepts",
+        "requested_mode": "hybrid_concepts",
+        "actual_mode": "hybrid_concepts",
+        "fallback_reason": null,
+        "status": "ok",
+        "matching_passages": 5,
+        "hits": [
+          {
+            "passage_id": "929f23a05ade9dea39bb32f9489eb8ddbbab4605207c835659074d71d49d9994",
+            "code": "F30002",
+            "title": "Power unit: DC link voltage overvoltage",
+            "kind": "cause",
+            "excerpt": "The power unit has detected an overvoltage condition in the DC link. - motor regenerates too much energy. - line supply voltage too high.…",
+            "reference": {
+              "source_type": "manual",
+              "document_number": "A5E33839529",
+              "edition": "02/2023",
+              "language": "en-US",
+              "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+              "section": "4.2",
+              "section_title": "List of faults and alarms",
+              "pdf_page": 905,
+              "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=905"
+            },
+            "applicability": {
+              "device_series": "G120",
+              "control_units": [
+                "CU240B-2",
+                "CU240B-2_DP",
+                "CU240E-2",
+                "CU240E-2_DP",
+                "CU240E-2_DP_F",
+                "CU240E-2_F",
+                "CU240E-2_PN",
+                "CU240E-2_PN_F"
+              ],
+              "firmware_versions": [
+                "4.7 SP14"
+              ],
+              "status": "candidate_only",
+              "note": "G120_SIM has no confirmed control unit or firmware; this is a candidate manual."
+            }
+          },
+          {
+            "passage_id": "8a95f7e6cf1c34edb6f378c84f0aa82cedd5cf76072c95ac535ddc78a2b4bfc5",
+            "code": "F30002",
+            "title": "Power unit: DC link voltage overvoltage",
+            "kind": "title",
+            "excerpt": "Power unit: DC link voltage overvoltage",
+            "reference": {
+              "source_type": "manual",
+              "document_number": "A5E33839529",
+              "edition": "02/2023",
+              "language": "en-US",
+              "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+              "section": "4.2",
+              "section_title": "List of faults and alarms",
+              "pdf_page": 904,
+              "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=904"
+            },
+            "applicability": {
+              "device_series": "G120",
+              "control_units": [
+                "CU240B-2",
+                "CU240B-2_DP",
+                "CU240E-2",
+                "CU240E-2_DP",
+                "CU240E-2_DP_F",
+                "CU240E-2_F",
+                "CU240E-2_PN",
+                "CU240E-2_PN_F"
+              ],
+              "firmware_versions": [
+                "4.7 SP14"
+              ],
+              "status": "candidate_only",
+              "note": "G120_SIM has no confirmed control unit or firmware; this is a candidate manual."
+            }
+          },
+          {
+            "passage_id": "150f1db7ee959830cb3378ad8f385e7529230510f6299e160ae9c863c123bca3",
+            "code": "F30002",
+            "title": "Power unit: DC link voltage overvoltage",
+            "kind": "diagnostic_value",
+            "excerpt": "Fault value (r0949, interpret decimal): DC link voltage at the time of trip [0.1 V].",
+            "reference": {
+              "source_type": "manual",
+              "document_number": "A5E33839529",
+              "edition": "02/2023",
+              "language": "en-US",
+              "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+              "section": "4.2",
+              "section_title": "List of faults and alarms",
+              "pdf_page": 905,
+              "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=905"
+            },
+            "applicability": {
+              "device_series": "G120",
+              "control_units": [
+                "CU240B-2",
+                "CU240B-2_DP",
+                "CU240E-2",
+                "CU240E-2_DP",
+                "CU240E-2_DP_F",
+                "CU240E-2_F",
+                "CU240E-2_PN",
+                "CU240E-2_PN_F"
+              ],
+              "firmware_versions": [
+                "4.7 SP14"
+              ],
+              "status": "candidate_only",
+              "note": "G120_SIM has no confirmed control unit or firmware; this is a candidate manual."
+            }
+          },
+          {
+            "passage_id": "e3d40496d089f67c9d4ee5bbc487a931c03141065d48d050913ee95bae708511",
+            "code": "F30002",
+            "title": "Power unit: DC link voltage overvoltage",
+            "kind": "remedy",
+            "excerpt": "-increase the ramp-down time (p1121). - set the rounding times (p1130, p1136). This is particularly recommended in U/f operation to relieve the DC link…",
+            "reference": {
+              "source_type": "manual",
+              "document_number": "A5E33839529",
+              "edition": "02/2023",
+              "language": "en-US",
+              "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+              "section": "4.2",
+              "section_title": "List of faults and alarms",
+              "pdf_page": 905,
+              "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=905"
+            },
+            "applicability": {
+              "device_series": "G120",
+              "control_units": [
+                "CU240B-2",
+                "CU240B-2_DP",
+                "CU240E-2",
+                "CU240E-2_DP",
+                "CU240E-2_DP_F",
+                "CU240E-2_F",
+                "CU240E-2_PN",
+                "CU240E-2_PN_F"
+              ],
+              "firmware_versions": [
+                "4.7 SP14"
+              ],
+              "status": "candidate_only",
+              "note": "G120_SIM has no confirmed control unit or firmware; this is a candidate manual."
+            }
+          },
+          {
+            "passage_id": "0ba6a68d7138ed6418c9673bae64208ec4c4af14ebb82fea6431f7624fa6d4f0",
+            "code": "F30002",
+            "title": "Power unit: DC link voltage overvoltage",
+            "kind": "cross_reference",
+            "excerpt": "See also: p0210 (Drive unit line supply voltage), p1240 (Vdc controller configuration (vector control))",
+            "reference": {
+              "source_type": "manual",
+              "document_number": "A5E33839529",
+              "edition": "02/2023",
+              "language": "en-US",
+              "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+              "section": "4.2",
+              "section_title": "List of faults and alarms",
+              "pdf_page": 905,
+              "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=905"
+            },
+            "applicability": {
+              "device_series": "G120",
+              "control_units": [
+                "CU240B-2",
+                "CU240B-2_DP",
+                "CU240E-2",
+                "CU240E-2_DP",
+                "CU240E-2_DP_F",
+                "CU240E-2_F",
+                "CU240E-2_PN",
+                "CU240E-2_PN_F"
+              ],
+              "firmware_versions": [
+                "4.7 SP14"
+              ],
+              "status": "candidate_only",
+              "note": "G120_SIM has no confirmed control unit or firmware; this is a candidate manual."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "call_00_eWwOEex2H4jdF7rtc57H2591",
+      "tool": "query_telemetry",
+      "arguments": "{\"fields\": [\"id\", \"timestamp\", \"dc_voltage\", \"fault_code\"], \"limit\": 1000, \"mode\": \"window\", \"start_ms\": 1795426779000, \"end_ms\": 1795426839001, \"table_name\": \"sim_f30002_overvoltage\"}",
+      "is_error": false,
+      "result": {
+        "status": "ok",
+        "source": {
+          "schema_name": "dcma",
+          "table_name": "sim_f30002_overvoltage",
+          "profile_version": "g120_sim_v1",
+          "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9",
+          "model_verification": "dictionary_consistency_only",
+          "model_verification_note": "Dictionary consistency checked; the model file was not independently verified."
+        },
+        "metadata": {
+          "id": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "timestamp": {
+            "stored_unit": "ms",
+            "display_unit": "ms",
+            "canonical_unit": "s",
+            "scale_factor": 0.001,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "dc_voltage": {
+            "stored_unit": "V",
+            "display_unit": "V",
+            "canonical_unit": "V",
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [
+              null
+            ],
+            "verification_status": "simulation_assumption",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          },
+          "fault_code": {
+            "stored_unit": null,
+            "display_unit": null,
+            "canonical_unit": null,
+            "scale_factor": 1.0,
+            "offset_value": 0.0,
+            "invalid_values": [],
+            "verification_status": "verified_simulator",
+            "source_sha256": "8afad5f6249b4a4aea617b362ba466fbdb596df192e73f2ef0b783fe944729b9"
+          }
+        },
+        "read_at_ms": 1795427899305,
+        "read_at_beijing": "2026-11-23T17:58:19.305+08:00",
+        "mode": "window",
+        "window_max_id": 432652,
+        "relative_seconds": null,
+        "data": [
+          {
+            "timestamp_ms": 1795426779000,
+            "time_beijing": "2026-11-23T17:39:39.000+08:00",
+            "id": 432632,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426779000/432632",
+            "values": {
+              "id": 432632,
+              "timestamp": "1795426779000",
+              "dc_voltage": 556.405,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426782000,
+            "time_beijing": "2026-11-23T17:39:42.000+08:00",
+            "id": 432633,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426782000/432633",
+            "values": {
+              "id": 432633,
+              "timestamp": "1795426782000",
+              "dc_voltage": 556.675,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426785000,
+            "time_beijing": "2026-11-23T17:39:45.000+08:00",
+            "id": 432634,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426785000/432634",
+            "values": {
+              "id": 432634,
+              "timestamp": "1795426785000",
+              "dc_voltage": 557.0,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426788000,
+            "time_beijing": "2026-11-23T17:39:48.000+08:00",
+            "id": 432635,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426788000/432635",
+            "values": {
+              "id": 432635,
+              "timestamp": "1795426788000",
+              "dc_voltage": 557.325,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426791000,
+            "time_beijing": "2026-11-23T17:39:51.000+08:00",
+            "id": 432636,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426791000/432636",
+            "values": {
+              "id": 432636,
+              "timestamp": "1795426791000",
+              "dc_voltage": 557.595,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426794000,
+            "time_beijing": "2026-11-23T17:39:54.000+08:00",
+            "id": 432637,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426794000/432637",
+            "values": {
+              "id": 432637,
+              "timestamp": "1795426794000",
+              "dc_voltage": 557.761,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426797000,
+            "time_beijing": "2026-11-23T17:39:57.000+08:00",
+            "id": 432638,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426797000/432638",
+            "values": {
+              "id": 432638,
+              "timestamp": "1795426797000",
+              "dc_voltage": 557.796,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426800000,
+            "time_beijing": "2026-11-23T17:40:00.000+08:00",
+            "id": 432639,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426800000/432639",
+            "values": {
+              "id": 432639,
+              "timestamp": "1795426800000",
+              "dc_voltage": 557.0,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426803000,
+            "time_beijing": "2026-11-23T17:40:03.000+08:00",
+            "id": 432640,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426803000/432640",
+            "values": {
+              "id": 432640,
+              "timestamp": "1795426803000",
+              "dc_voltage": 638.0,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426806000,
+            "time_beijing": "2026-11-23T17:40:06.000+08:00",
+            "id": 432641,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426806000/432641",
+            "values": {
+              "id": 432641,
+              "timestamp": "1795426806000",
+              "dc_voltage": 719.0,
+              "fault_code": "0"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426809000,
+            "time_beijing": "2026-11-23T17:40:09.000+08:00",
+            "id": 432642,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426809000/432642",
+            "values": {
+              "id": 432642,
+              "timestamp": "1795426809000",
+              "dc_voltage": 800.0,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426812000,
+            "time_beijing": "2026-11-23T17:40:12.000+08:00",
+            "id": 432643,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426812000/432643",
+            "values": {
+              "id": 432643,
+              "timestamp": "1795426812000",
+              "dc_voltage": 690.361,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426815000,
+            "time_beijing": "2026-11-23T17:40:15.000+08:00",
+            "id": 432644,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426815000/432644",
+            "values": {
+              "id": 432644,
+              "timestamp": "1795426815000",
+              "dc_voltage": 630.19,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426818000,
+            "time_beijing": "2026-11-23T17:40:18.000+08:00",
+            "id": 432645,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426818000/432645",
+            "values": {
+              "id": 432645,
+              "timestamp": "1795426818000",
+              "dc_voltage": 597.168,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426821000,
+            "time_beijing": "2026-11-23T17:40:21.000+08:00",
+            "id": 432646,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426821000/432646",
+            "values": {
+              "id": 432646,
+              "timestamp": "1795426821000",
+              "dc_voltage": 579.044,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426824000,
+            "time_beijing": "2026-11-23T17:40:24.000+08:00",
+            "id": 432647,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426824000/432647",
+            "values": {
+              "id": 432647,
+              "timestamp": "1795426824000",
+              "dc_voltage": 569.098,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426827000,
+            "time_beijing": "2026-11-23T17:40:27.000+08:00",
+            "id": 432648,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426827000/432648",
+            "values": {
+              "id": 432648,
+              "timestamp": "1795426827000",
+              "dc_voltage": 563.64,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426830000,
+            "time_beijing": "2026-11-23T17:40:30.000+08:00",
+            "id": 432649,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426830000/432649",
+            "values": {
+              "id": 432649,
+              "timestamp": "1795426830000",
+              "dc_voltage": 560.644,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426833000,
+            "time_beijing": "2026-11-23T17:40:33.000+08:00",
+            "id": 432650,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426833000/432650",
+            "values": {
+              "id": 432650,
+              "timestamp": "1795426833000",
+              "dc_voltage": 559.0,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426836000,
+            "time_beijing": "2026-11-23T17:40:36.000+08:00",
+            "id": 432651,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426836000/432651",
+            "values": {
+              "id": 432651,
+              "timestamp": "1795426836000",
+              "dc_voltage": 558.098,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          },
+          {
+            "timestamp_ms": 1795426839000,
+            "time_beijing": "2026-11-23T17:40:39.000+08:00",
+            "id": 432652,
+            "ref": "sim_f30002_overvoltage/g120_sim_v1/point/1795426839000/432652",
+            "values": {
+              "id": 432652,
+              "timestamp": "1795426839000",
+              "dc_voltage": 557.602,
+              "fault_code": "F30002"
+            },
+            "valid": {
+              "id": true,
+              "timestamp": true,
+              "dc_voltage": true,
+              "fault_code": true
+            }
+          }
+        ],
+        "values_are": "stored",
+        "coverage": {
+          "status": "complete",
+          "expected_points": 21,
+          "expected_available_points": 21,
+          "points": 21,
+          "unique_timestamps": 21,
+          "valid_points": {
+            "id": 21,
+            "timestamp": 21,
+            "dc_voltage": 21,
+            "fault_code": 21
+          },
+          "invalid_points": {
+            "id": 0,
+            "timestamp": 0,
+            "dc_voltage": 0,
+            "fault_code": 0
+          },
+          "first_ms": 1795426779000,
+          "last_ms": 1795426839000,
+          "first_beijing": "2026-11-23T17:39:39.000+08:00",
+          "last_beijing": "2026-11-23T17:40:39.000+08:00",
+          "gap_count": 0,
+          "missing_available_points": 0,
+          "gaps": [],
+          "gaps_truncated": false,
+          "irregular_intervals": 0,
+          "unavailable_ranges": []
+        },
+        "coverage_scope": "full_window",
+        "latest_sample_age_ms": null,
+        "page": {
+          "limit": 1000,
+          "returned_points": 21,
+          "truncated": false,
+          "first_ms": 1795426779000,
+          "last_ms": 1795426839000,
+          "next_cursor": null
+        },
+        "requested_range": {
+          "start_ms": 1795426779000,
+          "end_ms": 1795426839001,
+          "start_beijing": "2026-11-23T17:39:39.000+08:00",
+          "end_beijing": "2026-11-23T17:40:39.001+08:00"
+        },
+        "metadata_view": "units_and_validity; call get_signal_metadata for full definitions",
+        "content_truncated": false
+      }
+    }
+  ],
+  "report": "# G120_SIM 复核记录：最近一次跳闸（F30002）\n\n**数据源 / 字段版本**：`sim_f30002_overvoltage` / `g120_sim_v1`（`source_sha256` 8afad5f6…729b9；模型校验 = `dictionary_consistency_only`，模型文件未经独立核验）\n**本次查询时刻**：2026-11-23T17:58:19.305 +08:00\n**两个范围区分**\n- 请求窗口（原问题）：[2026-11-23 17:00:00, 17:50:00) +08:00，故障事件覆盖 17:00:00.000–17:49:57.000，1000/1000 点，无缺口。\n- 本次精确细查窗口：[2026-11-23 17:39:39.000, 17:40:39.001) +08:00（1795426779000–1795426839001），**实际覆盖 17:39:39.000–17:40:39.000**，`coverage_scope=full_window`，预期 21 点 / 返回 21 点，dc_voltage 有效 21、无效 0，gap_count=0，无截断。该窗口包含上一次 T±30 s 范围（17:39:39.000–17:40:30.000，18 点），并向右侧多覆盖到 17:40:39.000 共 3 点（id 432650–432652）；上次的“18 点”是因为没有取到右端这 3 点，**并非数据缺失**。\n\n## 一、三个关键样本（dc_voltage 原始点，单位 V）\n\n| 北京时间 | 行ID | dc_voltage | fault_code | 说明（复用已有同源功率/转速返回） |\n|---|---|---|---|---|\n| 17:40:03.000 | 432640 | 638.0 | 0 | 减速中，指令 933.333 rpm / 实速 1233.33 rpm，转矩 −2.5 N·m，actual_power −0.32289 kW（再生） |\n| 17:40:06.000 | 432641 | 719.0 | 0 | 减速中，指令 466.667 rpm / 实速 1066.67 rpm，actual_power −0.27925 kW（再生） |\n| 17:40:09.000 | 432642 | **800.0** | **F30002** | **首次峰值**：唯一最高点，同点即触发；status=FAULT，指令 0 rpm、实速 900 rpm、转矩与功率 0 |\n\n- 首次峰值复核结果不变：**800.0 V，时刻 17:40:09.000，行ID 432642**，为细查窗口 21 点中的唯一最大值。\n- 峰值之后电压回落：17:40:12 → 690.361 V，17:40:39 → 557.602 V（id 432652）；故障前基线约 556–558 V。\n- 口径提示：`fault_code` 定义“故障锁存时物理量可以已经回落”，且采样间隔为 3 s，800.0 V 是存储样本值，真实极值可能落在采样点之间；功率两种字段同源，只计 `actual_power` 一项（`actual_power`、`feedback_power` 为互为相反数的镜像）。\n\n## 二、锁存计数\n\n- 全部 `fault_code` 中，本窗确认新触发 **2 次**，均为 **F30002**：17:40:09.000（id 432642，最近一次）与 17:10:09.000（id 432042）；各有 1 次观测清除（17:41:30 / id 432669；17:11:30 / id 432069），无跨窗延续片段、无代码切换、无非零码冲突。\n- 锁存状态：自 17:40:09 起，细查窗口内 11 个点（id 432642–432652）持续为 F30002，直至 17:41:30 观测清除。\n\n## 三、最吻合的手册原因原句\n\nF30002「Power unit: DC link voltage overvoltage」，`candidate_only`，文档 A5E33839529，版次 02/2023，en-US，节 4.2，`pdf_page` 904（标题）/ 905（原因）。原文（`pdf_page` 905）：\n> “The power unit has detected an overvoltage condition in the DC link. - motor regenerates too much energy. - line supply voltage too high.…”\n\n与观测最吻合的是“**motor regenerates too much energy**”：减速指令 1400→933→467→0 rpm 时 `actual_power` 为负（−0.37→−0.28 kW），母线经 557→638→719→800 V 后跳闸。\n\n## 四、待核实项\n\n1. **阈值未定**：800.0 V 为观测值，不是设定值；现场过压保护阈值需查现场配置（关联 p0210、p1240，`pdf_page` 905），请勿直接把本次观测值当作保护设定。\n2. **控制单元/固件未知**：G120_SIM 无已确认 CU 与固件，手册适用范围为 G120 CU240B-2…CU240E-2_PN_F、固件 4.7 SP14，仅候选。\n3. **“line supply voltage too high”未证实也未排除**：窗内无进线电压测量；故障前母线稳定于 556–558 V。\n4. **采样粒度**：3 s 采样，减速瞬态细节与真实峰值时刻可能未被采到；细查窗口内唯一极值为采样值。\n5. **未逐点细查 17:10:09 事件**（仅计数）；`r0949` 诊断值（0.1 V 分辨率，`pdf_page` 905）未在数据中提供，无法核对。\n6. **模拟数据局限**：dc_voltage、转矩、功率为 `simulation_assumption`（`hardware_mapping_verified=false`），结论限于演示条件；`actual_power` 非已确认的电网输入功率。"
+}

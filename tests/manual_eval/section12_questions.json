@@ -1,0 +1,94 @@
+[
+  {
+    "id": "J1",
+    "group": "J1",
+    "split": "new",
+    "slice": "zh_no_code",
+    "query": "电机的测温探头触发评估报警，最快过多久才可能变成故障？",
+    "evidence": [
+      [
+        [
+          "A07015",
+          "cause",
+          871,
+          "at the earliest, 50 ms after alarm A07015"
+        ]
+      ]
+    ]
+  },
+  {
+    "id": "J2",
+    "group": "J2",
+    "split": "new",
+    "slice": "zh_no_code",
+    "query": "母线预充电太频繁的时候，手册说具体什么东西会过热？",
+    "evidence": [
+      [
+        [
+          "F30027",
+          "cause",
+          911,
+          "The precharging resistors are overheated as there were too many precharging operations per time unit."
+        ]
+      ]
+    ]
+  },
+  {
+    "id": "J3",
+    "group": "J3",
+    "split": "new",
+    "slice": "zh_no_code",
+    "query": "今天我看到降速时直流母线过压，说明书列过哪些可能原因？",
+    "evidence": [
+      [
+        [
+          "F30002",
+          "cause",
+          905,
+          "motor regenerates too much energy"
+        ]
+      ]
+    ]
+  },
+  {
+    "id": "J4",
+    "group": "J4",
+    "split": "new",
+    "slice": "zh_no_code",
+    "query": "过电流跳闸，电缆铺得太长也有可能吗？",
+    "evidence": [
+      [
+        [
+          "F30001",
+          "cause",
+          904,
+          "power cables exceed the maximum permissible length"
+        ]
+      ]
+    ]
+  },
+  {
+    "id": "J5",
+    "group": "J5",
+    "split": "new",
+    "slice": "hard_negative",
+    "query": "请报一个电机过热上门维修的费用。",
+    "status": "no_results"
+  },
+  {
+    "id": "J6",
+    "group": "J6",
+    "split": "new",
+    "slice": "hard_negative",
+    "query": "直流母线的预充电电阻，库房目前还有多少库存？",
+    "status": "no_results"
+  },
+  {
+    "id": "J7",
+    "group": "J7",
+    "split": "new",
+    "slice": "hard_negative",
+    "query": "今天运行中总共发生了几次过压故障？",
+    "status": "no_results"
+  }
+]

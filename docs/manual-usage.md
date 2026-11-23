@@ -28,6 +28,19 @@ python tests/live_manual.py --pdf $pdf --index-dir $index
 
 导入命令也可用 `python -m tuagent.manual.importer` 调用。它从第 4.2 节书签定位页区间。兼容同类列式布局但缺书签的 PDF 可用 `--pages FIRST:LAST` 指定 1 起算的两端包含页区间。相同 PDF、版次、声明和页区间重复导入返回 `unchanged`。各版次独立保留。导入在临时 SQLite 副本上提交后原子发布，工具在调用时打开已发布的只读索引。
 
+
+## 当前诊断与检索入口
+
+`register_manual_tools(registry, index_dir=".manual/index")` 默认使用 `hybrid_concepts`。确切代码由 `lookup_drive_code` 和带码的 `search_manual` 查询。传 `chinese_pilot=True` 可对 A5E33839529、02/2023 英文第 4.2 节的中文无代码问题启用 `evidence_rrf`，每路 20 个候选、至少 2 个锚点，原问题编码一次。试点的向量失败默认报错，`EvidenceOptions(fallback=True)` 显式允许降到 `evidence_rules`。本地规则模式、`semantic=False`、`vector` 和 `rrf` 保持可用。
+
+```powershell
+python tests/live_manual.py --pdf .manual/g120-cu240be-2-0223-en.pdf --index-dir .manual/index --evidence-v2
+python tests/manual_eval/evaluate_v2.py --split dev --arms default rules_items --out .manual/v2/current-dev.json
+python tests/live_diagnosis.py --source sim_f30002_overvoltage --last-seconds 3600 --out .manual/diagnosis-latest.md
+```
+
+诊断入口使用现有只读数据库和生成模型配置，写入 Markdown 与同名 JSON 工具记录。历史九路实验统一使用提交 `24503d3`。[诊断报告与验收命令](diagnosis/section12.md) · [历史实验](manual-evidence-v2.md)
+
 ## 接入 Agent
 
 ```python

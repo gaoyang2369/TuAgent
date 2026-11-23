@@ -1,0 +1,52 @@
+--- a/src/tuagent/manual/evidence.py
++++ b/src/tuagent/manual/evidence.py
+@@ -96,8 +96,8 @@
+     ),
+     (r"序列号|\bserial number\b", "site_serial", None),
+     (
+-        r"昨天|昨晚|今天|最近.{0,4}(?:次|发生)|历史.{0,6}次|实际触发时间|(?:报了|发生了)几次|"
+-        r"\b(?:yesterday|today|telemetry)\b",
++        r"最近.{0,4}(?:次|发生)|历史.{0,6}次|实际触发时间|(?:报|发生|出现).{0,6}(?:几次|多少次)|"
++        r"\b(?:telemetry|how many times)\b",
+         "site_events",
+         None,
+     ),
+@@ -319,8 +319,16 @@
+         or not question.query
+         or (question.comparison and not topical and kind == "title")
+     )
++    asks_delay = re.search(r"最早|最快|最短|至少.{0,3}(?:多久|多长)", question.query)
++    asks_frequency = re.search(r"(?:预充|操作).{0,10}(?:频繁|次数|太多|过多|太勤)", question.query)
+     choices = []
+     parts = segments(text)
++    if asks_delay:
++        # Keep the timer antecedent when the answer refers to "this time".
++        parts = [
++            f"{parts[i-1]} {part}" if i and "this time" in part and "time in " in parts[i-1] else part
++            for i, part in enumerate(parts)
++        ]
+     passage_params = set(_PARAM.findall(text.casefold()))
+     if question.params and not question.params & passage_params:
+         return None, "requested_parameter_absent"
+@@ -335,7 +343,11 @@
+     ):
+         parts = [text.strip(), *parts]
+     for index, excerpt in enumerate(parts):
+-        if len(excerpt) > 280 or len(excerpt.split()) > 24:
++        if len(excerpt) > 280:
++            continue
++        if asks_delay and not re.search(r"\d+(?:\.\d+)?\s*(?:ms|s|seconds?|minutes?)\b", excerpt, re.I):
++            continue
++        if asks_frequency and not re.search(r"(?:operations|cycles|attempts).{0,16}per|too (?:many|frequent)", excerpt, re.I):
+             continue
+         if question.required_pattern and not re.search(
+             question.required_pattern, excerpt, re.I
+@@ -366,6 +378,8 @@
+             and "regenerat" in _features(excerpt)
+             and not question.negative
+         )
++        if asks_delay and re.search(r"earliest|at least|minimum", excerpt, re.I):
++            anchors.add("minimum delay")
+         if braking_evidence:
+             anchors.add("ramp-down")
+         if not (bare_scope or question.params or question.required_pattern) and (

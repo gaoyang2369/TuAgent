@@ -1,9 +1,7 @@
 import asyncio
 import json
-import math
 import re
 import sqlite3
-import time
 from collections import defaultdict
 from itertools import zip_longest
 from pathlib import Path
@@ -15,7 +13,6 @@ from .contracts import LookupArgs, ManualScope, SearchArgs, clean
 from .evidence import (
     EvidenceOptions,
     EvidenceRulePlan,
-    EvidenceServiceError,
     QuestionEvidence,
     select_evidence,
 )
@@ -276,14 +273,16 @@ def _no_results(
     return {**base, "status": "no_results", "message": message, "hits": []}
 
 
-def _hit(item, args: SearchArgs, plan: SearchPlan) -> dict:
+def _hit(
+    item, args: SearchArgs, plan: SearchPlan, *, excerpt: str | None = None
+) -> dict:
     _, manual, row = item
     return {
         "passage_id": passage_key(manual, row),
         "code": row["code"],
         "title": row["title"],
         "kind": row["kind"],
-        "excerpt": _excerpt(row["text"], plan),
+        "excerpt": excerpt if excerpt is not None else _excerpt(row["text"], plan),
         "reference": _citation(manual, row["page"]),
         "applicability": _applicability(manual, args),
     }
@@ -507,97 +506,38 @@ class _ManualTools:
     ) -> ToolOutput:
         options = self.evidence
         question = QuestionEvidence(query)
-        phases: dict = {
-            "rewrite": {"status": "disabled"},
-            "requests": {},
-            "stage_ms": {},
-        }
-        failures = {}
-        hybrid = self.mode == "evidence_rrf"
-
-        def measured(name, action):
-            phases["requests"][name] = phases["requests"].get(name, 0) + 1
-            start = time.perf_counter()
-            try:
-                return action()
-            except (VectorError, EvidenceServiceError) as error:
-                failures[name] = error.reason
-                return None
-            finally:
-                elapsed = (time.perf_counter() - start) * 1000
-                phases["stage_ms"][name] = round(
-                    phases["stage_ms"].get(name, 0) + elapsed, 3
-                )
-
-        rewrite = None
-        if hybrid and options.rewrite != "none":
-            phases["rewrite"] = {
-                "status": "skipped_scope" if codes else "skipped_preservation"
-            }
-            projection = None if codes else question.fixed_rewrite()
-            if projection:
-                candidate = (
-                    projection
-                    if options.rewriter is None
-                    else measured(
-                        "rewrite",
-                        lambda: options.rewriter.rewrite(args.query, question.terms),
-                    )
-                )
-                if candidate and question.validate_rewrite(candidate):
-                    rewrite = candidate
-                    phases["rewrite"] = {"status": "applied", "query": rewrite}
-                else:
-                    phases["rewrite"] = {
-                        "status": "service_failure"
-                        if "rewrite" in failures
-                        else "drift",
-                        "query": candidate,
-                        "used_original": "rewrite" not in failures or options.fallback,
-                    }
-
+        phases = {}
+        base = self._mode(self.mode)
         match_codes = codes or (None,)
         depth = options.depth
-        original_plan = EvidenceRulePlan(question, bool(codes), len(codes) > 1)
-        rule_groups = [
-            _rule_rank(db, applicable, code, original_plan) for code in match_codes
-        ]
-        phases["rules_original"] = [_trace_rank(group, depth) for group in rule_groups]
-        if rewrite:
-            rewritten_plan = EvidenceRulePlan(
-                question, bool(codes), len(codes) > 1, rewrite
-            )
-            rule_groups = [
-                _rule_rank(db, applicable, code, rewritten_plan) for code in match_codes
-            ]
+        plan = EvidenceRulePlan(question, bool(codes), len(codes) > 1)
+        rule_groups = [_rule_rank(db, applicable, code, plan) for code in match_codes]
         phases["rules"] = [_trace_rank(group, depth) for group in rule_groups]
 
         ranked = [group[:depth] for group in rule_groups]
-        if hybrid:
+        if self.mode == "evidence_rrf":
             documents = corpus(db, manuals)
             manual_ids = {manual.id for manual in applicable}
-            vectors = measured(
-                "embedding",
-                lambda: self.vectors.rank(documents, manual_ids, codes, args.query),
-            )
-            vector_groups = _group_vectors(vectors or [], codes)
-            phases["vector"] = [_trace_rank(group, depth) for group in vector_groups]
-            if options.english_vector and rewrite and vectors is not None:
-                english = measured(
-                    "english_embedding",
-                    lambda: self.vectors.rank(documents, manual_ids, codes, rewrite),
-                )
-                english_groups = _group_vectors(english or [], codes)
-                phases["english_vector"] = [
-                    _trace_rank(group, depth) for group in english_groups
-                ]
-                bilingual = RankingOptions(depth=depth, rrf_k=20, vector_weight=1)
-                vector_groups = [
-                    _rrf(original, translated, bilingual)
-                    for original, translated in zip(
-                        vector_groups, english_groups, strict=True
+            try:
+                vectors = self.vectors.rank(documents, manual_ids, codes, args.query)
+            except VectorError as error:
+                failures = {"embedding": error.reason}
+                phases["failures"] = failures
+                if not options.fallback:
+                    return _output(
+                        {
+                            **self._mode(),
+                            "status": "evidence_unavailable",
+                            "hits": [],
+                            "service_errors": failures,
+                        },
+                        is_error=True,
+                        diagnostics=phases,
                     )
-                ]
+                base = self._mode("evidence_rules", error.reason)
+                vectors = []
+            vector_groups = _group_vectors(vectors, codes)
+            phases["vector"] = [_trace_rank(group, depth) for group in vector_groups]
             fusion = RankingOptions(depth=depth, rrf_k=20, vector_weight=1)
             ranked = [
                 _rrf(rule_group, vector_group, fusion)
@@ -606,54 +546,6 @@ class _ManualTools:
                 )
             ]
             phases["fused"] = [_trace_rank(group, len(group)) for group in ranked]
-        if options.reranker is not None and any(ranked):
-            flat = [item for group in ranked for item in group]
-
-            def rerank():
-                scores = options.reranker.score(
-                    args.query,
-                    [
-                        f"{row['title']}\n{row['kind']}\n{row['text']}"
-                        for _, _, row in flat
-                    ],
-                )
-                if len(scores) != len(flat) or not all(
-                    math.isfinite(score) for score in scores
-                ):
-                    raise EvidenceServiceError("rerank_invalid_response")
-                return iter(scores)
-
-            scores = measured("rerank", rerank)
-            if scores is not None:
-                ranked = [
-                    sorted(
-                        ((next(scores), manual, row) for _, manual, row in group),
-                        key=lambda item: -item[0],
-                    )
-                    for group in ranked
-                ]
-                phases["reranked"] = [
-                    _trace_rank(group, len(group)) for group in ranked
-                ]
-
-        phases["failures"] = failures
-        base = self._mode(self.mode)
-        if failures:
-            if not options.fallback:
-                return _output(
-                    {
-                        **self._mode(),
-                        "status": "evidence_unavailable",
-                        "hits": [],
-                        "service_errors": failures,
-                    },
-                    is_error=True,
-                    diagnostics=phases,
-                )
-            base = self._mode(
-                self.mode if "embedding" not in failures else "evidence_rules",
-                next(iter(failures.values())),
-            )
         accepted = []
         decisions = []
         for group in ranked:
@@ -680,10 +572,7 @@ class _ManualTools:
                     }
                 )
                 if excerpt is not None:
-                    hit = _hit(item, args, original_plan)
-                    if options.complete_excerpts:
-                        hit["excerpt"] = excerpt
-                    group_hits.append(hit)
+                    group_hits.append(_hit(item, args, plan, excerpt=excerpt))
             accepted.append(group_hits)
         phases["decisions"] = decisions
         if not all(accepted):
@@ -701,7 +590,9 @@ class _ManualTools:
             diagnostics=phases,
         )
 
-    def _read(self, args: LookupArgs | SearchArgs) -> ToolOutput:
+    def _read(
+        self, args: LookupArgs | SearchArgs, pilot: "_ManualTools | None" = None
+    ) -> ToolOutput:
         base = _lookup_base(args) if isinstance(args, LookupArgs) else self._mode()
         try:
             with read_index(self.index_dir) as db:
@@ -738,6 +629,19 @@ class _ManualTools:
                     )
                 if isinstance(args, LookupArgs):
                     return _output(_lookup(db, applicable, args))
+                if pilot and _series(args) == "G120" and re.search(r"[\u3400-\u9fff]", args.query):
+                    routed = search_codes(args.query, args.code, args.limit)
+                    if (
+                        routed is not None
+                        and not routed[0]
+                        and all(
+                            m.edition.language.casefold() == "en-us"
+                            and m.edition.document_number == "A5E33839529"
+                            and m.edition.edition == "02/2023"
+                            for m in applicable
+                        )
+                    ):
+                        return pilot._search(db, manuals, applicable, args)
                 return self._search(db, manuals, applicable, args)
         except ManualIndexError as exc:
             return _output(
@@ -758,8 +662,9 @@ def register_manual_tools(
     embedder: Embedder | None = None,
     fallback_to_rules: bool = False,
     ranking: RankingOptions = RankingOptions(),
-    evidence: EvidenceOptions = EvidenceOptions(),
+    evidence: EvidenceOptions | None = None,
     trace_candidates: bool = False,
+    chinese_pilot: bool = False,
 ) -> None:
     """Register read-only manual tools. The PDF and index paths stay in the application."""
     if mode is None:
@@ -775,10 +680,8 @@ def register_manual_tools(
         raise ValueError("Unknown manual retrieval mode")
     if not semantic and mode != "keyword_only":
         raise ValueError("semantic=False requires keyword_only")
-    if mode != "evidence_rrf" and (
-        evidence.rewrite != "none" or evidence.reranker is not None
-    ):
-        raise ValueError("Rewrite and reranking require evidence_rrf")
+    if evidence is None:
+        evidence = EvidenceOptions(min_anchors=1 if mode == "evidence_rules" else 2)
     tools = _ManualTools(
         Path(index_dir),
         mode,
@@ -788,6 +691,23 @@ def register_manual_tools(
         evidence,
         trace_candidates,
     )
+    pilot = None
+    if chinese_pilot:
+        if mode != "hybrid_concepts":
+            raise ValueError("chinese_pilot requires the default hybrid_concepts mode")
+        pilot = _ManualTools(
+            Path(index_dir),
+            "evidence_rrf",
+            embedder,
+            fallback_to_rules,
+            ranking,
+            evidence,
+            trace_candidates,
+        )
+
+    async def search_handler(args: SearchArgs, context: ToolContext) -> ToolOutput:
+        return await asyncio.to_thread(tools._read, args, pilot)
+
     registry.register(
         "lookup_drive_code",
         "Look up a complete SINAMICS fault or alarm code, including the F/A prefix and leading zeros. "
@@ -801,5 +721,5 @@ def register_manual_tools(
         "Describe the symptom in Chinese or English. Supply the edition and a single full code when known. "
         "To compare codes, name them in the query, explicitly ask for a comparison, and omit the code field.",
         SearchArgs,
-        tools.execute,
+        search_handler,
     )

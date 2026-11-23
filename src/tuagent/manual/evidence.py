@@ -3,44 +3,18 @@
 import re
 import unicodedata
 from dataclasses import dataclass
-from typing import Literal, Protocol
 
 from .retrieval import SearchPlan, keywords
-
-
-class RewriteBackend(Protocol):
-    def rewrite(self, question: str, terms: dict[str, str]) -> str: ...
-
-
-class RerankBackend(Protocol):
-    def score(self, question: str, documents: list[str]) -> list[float]: ...
-
-
-class EvidenceServiceError(Exception):
-    def __init__(self, reason: str):
-        super().__init__(reason)
-        self.reason = reason
 
 
 @dataclass(frozen=True)
 class EvidenceOptions:
     depth: int = 20
-    complete_excerpts: bool = True
-    rewrite: Literal["none", "fixed", "automatic"] = "none"
-    rewriter: RewriteBackend | None = None
-    english_vector: bool = False
-    reranker: RerankBackend | None = None
-    min_anchors: int = 1
+    min_anchors: int = 2
     fallback: bool = False
 
     def __post_init__(self) -> None:
-        if (
-            self.depth not in (20, 40)
-            or self.min_anchors not in (1, 2)
-            or self.rewrite not in {"none", "fixed", "automatic"}
-            or (self.rewrite == "automatic") != (self.rewriter is not None)
-            or (self.english_vector and self.rewrite == "none")
-        ):
+        if self.depth != 20 or self.min_anchors not in (1, 2):
             raise ValueError("Invalid manual evidence options")
 
 
@@ -161,9 +135,6 @@ _CODE = re.compile(r"(?<![a-z0-9_])[FA]\d{5}(?![a-z0-9_])", re.I)
 _NUMBER = re.compile(
     r"(?<![\w.])[+−-]?\d+(?:\.\d+)?(?![\d.])|(?<=[\u3400-\u9fff])[+−-]?\d+(?:\.\d+)?(?![\d.])"
 )
-_UNITS = re.compile(
-    r"(?i)\b(?:ms|s|A|V|Hz|kW|rpm|ohm|K)\b|°\s*C|%|毫秒|秒|伏|安培|摄氏度|欧姆"
-)
 _NEGATION = re.compile(
     r"[不未无没]|\b(?:no|not|never|without|cannot|isn't|doesn't|lacks?)\b",
     re.I,
@@ -176,12 +147,8 @@ _COMPARE_CONDITION = re.compile(
     r"门槛|阈值|判据|条件|触发|断开|短路|threshold|condition|open circuit|short.circuit",
     re.I,
 )
-_CHINESE_QUANTITY = re.compile(
-    r"[零一二两三四五六七八九十百千万点]+\s*(?:毫秒|秒|伏|安培|摄氏度|欧姆|年|次)"
-)
 _ALARM_ONLY = re.compile(r"哪个报警|哪条报警|什么报警|which alarm", re.I)
 _FAULT_ONLY = re.compile(r"哪个故障|哪条故障|什么故障|which fault", re.I)
-_CJK = re.compile(r"[\u3400-\u9fff]")
 _COMMON_ANCHORS = {
     "drive",
     "unit",
@@ -225,14 +192,6 @@ _INFLECTIONS = {
     "over-voltage": "overvoltage",
     "short-circuited": "short-circuit",
 }
-_UNIT_ENGLISH = {
-    "毫秒": "ms",
-    "秒": "s",
-    "伏": "v",
-    "安培": "a",
-    "摄氏度": "°c",
-    "欧姆": "ohm",
-}
 _ENGLISH_GLUE = set(
     (
         "what which how why does do did is are was were can could may should will would the a an "
@@ -241,7 +200,6 @@ _ENGLISH_GLUE = set(
         "not without cannot never compare versus separately"
     ).split()
 )
-_TECHNICAL_WORD = re.compile(r"[A-Za-z][A-Za-z0-9/-]+")
 
 
 def _features(text: str) -> set[str]:
@@ -255,7 +213,7 @@ def _features(text: str) -> set[str]:
 class QuestionEvidence:
     def __init__(self, query: str):
         self.query = unicodedata.normalize("NFKC", query)
-        self.terms = {p: term for p, term in _TERMS if re.search(p, self.query, re.I)}
+        terms = [term for pattern, term in _TERMS if re.search(pattern, self.query, re.I)]
         self.attribute, self.required_pattern = next(
             (
                 (name, proof)
@@ -269,14 +227,7 @@ class QuestionEvidence:
         )
         self.params = set(_PARAM.findall(self.query.casefold()))
         self.numbers = set(_NUMBER.findall(_PARAM.sub("", _CODE.sub("", self.query))))
-        self.literals = tuple(
-            dict.fromkeys(
-                word
-                for word in _TECHNICAL_WORD.findall(self.query)
-                if word.casefold() not in _ENGLISH_GLUE
-            )
-        )
-        self.features = _features(self.query + " " + " ".join(self.terms.values()))
+        self.features = _features(self.query + " " + " ".join(terms))
         self.short = bool(_SHORT.fullmatch(self.query.strip()))
         self.negative = bool(_NEGATION.search(self.query))
         self.comparison = bool(_COMPARE.search(self.query))
@@ -287,69 +238,6 @@ class QuestionEvidence:
         ):
             self.kind = "cause"
 
-    def fixed_rewrite(self) -> str | None:
-        if not _CJK.search(self.query) or len(self.terms) < 2 or self.attribute:
-            return None
-        # A fragment rewrite cannot preserve the attachment of these operators.
-        if (
-            self.negative
-            or self.comparison
-            or _NUMBER.search(self.query)
-            or _CHINESE_QUANTITY.search(self.query)
-            or self.params
-            or _UNITS.search(self.query)
-        ):
-            return None
-        prefix = {
-            "cause": "What causes",
-            "remedy": "What should be checked for",
-            "diagnostic_value": "What diagnostic value is documented for",
-        }.get(self.kind, "What does the manual say about")
-        translated = " ".join(dict.fromkeys((*self.terms.values(), *self.literals)))
-        return f"{prefix} {translated}?"
-
-    def validate_rewrite(self, rewritten: str) -> bool:
-        if (
-            not rewritten
-            or len(rewritten) > 500
-            or _CJK.search(rewritten)
-            or "\n" in rewritten
-            or rewritten.count("?") != 1
-            or not rewritten.endswith("?")
-        ):
-            return False
-        if (
-            not self.terms
-            or self.attribute
-            or self.negative
-            or self.comparison
-            or _NEGATION.search(rewritten)
-            or _COMPARE.search(rewritten)
-        ):
-            return False
-        # Arbitrary additions cannot pass the vocabulary check. The source phrase
-        # mappings are required in full rather than accepting related symptoms.
-        source = self.query.casefold()
-        target = rewritten.casefold()
-        for pattern in (_CODE, _PARAM, _NUMBER):
-            if sorted(pattern.findall(source)) != sorted(pattern.findall(target)):
-                return False
-        if not {word.casefold() for word in self.literals} <= set(
-            _TECHNICAL_WORD.findall(target)
-        ):
-            return False
-        source_units = sorted(_UNIT_ENGLISH.get(u, u) for u in _UNITS.findall(source))
-        if source_units != sorted(_UNITS.findall(target)):
-            return False
-        allowed = keywords(source + " " + " ".join(self.terms.values())) | _ENGLISH_GLUE
-        if not keywords(target) <= allowed:
-            return False
-        target_features = _features(target)
-        return (
-            all(_features(term) <= target_features for term in self.terms.values())
-            and QuestionEvidence(rewritten).kind == self.kind
-        )
-
 
 class EvidenceRulePlan(SearchPlan):
     def __init__(
@@ -357,22 +245,21 @@ class EvidenceRulePlan(SearchPlan):
         question: QuestionEvidence,
         code_filter: bool,
         comparison: bool,
-        rewrite: str | None = None,
     ):
-        # Decode only the colloquial DC-link query deterministically in this arm.
-        original = question.query
-        if (
-            re.search(r"刹车|急刹", original)
-            and re.search(r"直流侧|母线", original)
-            and re.search(r"电压往上窜|电压蹿高", original)
-        ):
-            original += " 减速 母线过压 电压升高 原因"
         super().__init__(
-            f"{original} {rewrite or ''}".strip(),
-            True,
-            code_filter=code_filter,
-            comparison=comparison,
+            question.query, True, code_filter=code_filter, comparison=comparison
         )
+        # Local concept postings for a colloquial description of a braking transient.
+        if (
+            re.search(r"刹车|急刹", question.query)
+            and re.search(r"直流侧|母线", question.query)
+            and re.search(r"电压往上窜|电压蹿高", question.query)
+        ):
+            self.concepts.update(("deceleration", "dc_link", "overvoltage"))
+            if "regeneration" not in self.concepts:
+                self.related.add("regeneration")
+            self.related.difference_update(self.concepts)
+            self.intent = "cause"
         self.params = question.params
         if question.kind:
             self.intent = question.kind

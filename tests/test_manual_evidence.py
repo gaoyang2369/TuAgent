@@ -18,7 +18,6 @@ from tuagent import (
 )
 from tuagent.manual import EvidenceOptions, register_manual_tools
 from tuagent.manual.evidence import (
-    EvidenceServiceError,
     QuestionEvidence,
     select_evidence,
 )
@@ -159,7 +158,37 @@ class EvidenceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(hit["reference"]["pdf_page"], 904)
         self.assertEqual(hit["applicability"]["status"], "matches_supplied_scope")
 
-    def test_numeric_item_and_rewrite_preservation(self):
+    async def test_chinese_pilot_routes_only_scoped_code_free_queries(self):
+        index = self.index / "pilot"
+        write_index(
+            index,
+            descriptor("02/2023", language="en-US", document_number="A5E33839529"),
+            "b" * 64,
+            904,
+            905,
+            [
+                fixture(
+                    "F30002",
+                    "DC link overvoltage",
+                    904,
+                    Passage("cause", 905, "motor regenerates too much energy."),
+                )
+            ],
+        )
+        registry = ToolRegistry()
+        register_manual_tools(registry, index_dir=index, chinese_pilot=True)
+        executor = ToolExecutor(registry)
+        for query, code, expected in (
+            ("减速时母线过压有哪些原因？", None, "evidence_rrf"),
+            ("F30002 的原因", None, "hybrid_concepts"),
+            ("原因", "F30002", "hybrid_concepts"),
+            ("What causes overvoltage?", None, "hybrid_concepts"),
+        ):
+            args = {"code": code} if code else {}
+            result = await executor.execute(self.call(query, **args))
+            self.assertEqual(json.loads(result.content)["requested_mode"], expected)
+
+    def test_numeric_item(self):
         excerpt, _ = select_evidence(
             QuestionEvidence("r2124 的 12 表示什么？"),
             "Motor overtemperature",
@@ -170,74 +199,44 @@ class EvidenceTests(unittest.IsolatedAsyncioTestCase):
             min_anchors=1,
         )
         self.assertEqual(excerpt, "12: Output current reduction active.")
-        question = QuestionEvidence("半导体光纤断线有哪些原因？")
-        fixed = question.fixed_rewrite()
-        self.assertTrue(question.validate_rewrite(fixed))
-        self.assertFalse(
-            question.validate_rewrite(
-                "What causes a short-circuit in the semiconductor fiber-optic cable?"
-            )
-        )
-        self.assertFalse(question.validate_rewrite(fixed.replace("?", " F30002?")))
-        self.assertFalse(
-            question.validate_rewrite(fixed.replace("causes", "does not cause"))
-        )
-        for query in (
-            "没有光纤断线会怎样？",
-            "比较电机热度和散热片热度",
-            "温度探头等 50 ms 后会怎样？",
-        ):
-            self.assertIsNone(QuestionEvidence(query).fixed_rewrite(), query)
 
     @unittest.skipUnless(
         importlib.util.find_spec("numpy"), "manual-vector extra unavailable"
     )
     async def test_fusion_stages_and_strict_service_failure(self):
-        class Reranker:
-            def __init__(self):
-                self.calls = []
-
-            def score(self, question, documents):
-                self.calls.append((question, documents))
-                return list(range(len(documents)))
-
-        class Unavailable:
-            def score(self, question, documents):
-                raise EvidenceServiceError("rerank_timeout")
-
         fake = FakeEmbedder()
         build_vectors(self.index, fake)
-        reranker = Reranker()
+        fake.calls.clear()
         query = self.call("刹车时直流侧电压往上窜，手册列了哪些原因？")
         allowed = ToolExecutor(
             self.registry(
                 "evidence_rrf",
                 embedder=fake,
-                evidence=EvidenceOptions(reranker=reranker),
+                trace_candidates=True,
             )
         )
         reply = await allowed.execute(query)
         self.assertFalse(reply.is_error, reply.content)
         trace = reply.details["ranking_diagnostics"]
         self.assertTrue(trace["vector"][0])
-        self.assertEqual(len(reranker.calls), 1)
-        self.assertEqual(reranker.calls[0][0], json.loads(query.arguments)["query"])
+        self.assertEqual(len(fake.calls), 1)
+        self.assertIn(json.loads(query.arguments)["query"], fake.calls[0][0])
         fused = [h["passage_id"] for h in trace["fused"][0]]
         self.assertEqual(len(fused), len(set(fused)))
-        self.assertEqual(set(fused), {h["passage_id"] for h in trace["reranked"][0]})
         await allowed.execute(self.call("母线过压怎么查？", edition="01/1900"))
-        self.assertEqual(len(reranker.calls), 1)
+        self.assertEqual(len(fake.calls), 1)
+        fake.failing = True
         for fallback in (False, True):
             unavailable = ToolExecutor(
                 self.registry(
                     "evidence_rrf",
                     embedder=fake,
-                    evidence=EvidenceOptions(reranker=Unavailable(), fallback=fallback),
+                    evidence=EvidenceOptions(fallback=fallback),
                 )
             )
             result = await unavailable.execute(query)
             self.assertEqual(result.is_error, not fallback)
             payload = json.loads(result.content)
             self.assertEqual(
-                payload["fallback_reason"], "rerank_timeout" if fallback else None
+                payload["fallback_reason"], "embedding_timeout" if fallback else None
             )

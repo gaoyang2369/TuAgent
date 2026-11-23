@@ -1,0 +1,833 @@
+[
+  {
+    "model": "deepseek-flash",
+    "question": "这段时间最近一次跳闸是怎么回事",
+    "window": {
+      "table_name": "sim_f07900_blocked",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795424400000,
+      "end_ms": 1795427400000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "find_code_events",
+      "get_signal_metadata",
+      "lookup_drive_code",
+      "search_manual",
+      "query_telemetry",
+      "query_telemetry"
+    ],
+    "events": [
+      {
+        "arguments": {
+          "table_name": "sim_f07900_blocked",
+          "start_ms": 1795424400000,
+          "end_ms": 1795427400000,
+          "code_field": "fault_code"
+        },
+        "read_at": "2026-11-23T17:54:44.487+08:00",
+        "count": 2,
+        "coverage": {
+          "status": "complete",
+          "points": 1000,
+          "valid_points": {
+            "fault_code": 1000
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:49:57.000+08:00"
+        },
+        "triggers": [
+          {
+            "timestamp_ms": 1795425015000,
+            "time_beijing": "2026-11-23T17:10:15.000+08:00",
+            "id": 432044
+          },
+          {
+            "timestamp_ms": 1795426815000,
+            "time_beijing": "2026-11-23T17:40:15.000+08:00",
+            "id": 432644
+          }
+        ]
+      }
+    ],
+    "points": {
+      "sim_f07900_blocked/g120_sim_v1/point/1795426770000/432629": {
+        "id": 432629,
+        "timestamp": "1795426770000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 1000.0,
+        "torque_actual": 0.24,
+        "current_actual": 1.06288
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426773000/432630": {
+        "id": 432630,
+        "timestamp": "1795426773000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 900.0,
+        "torque_actual": 0.566,
+        "current_actual": 1.10436
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426797000/432638": {
+        "id": 432638,
+        "timestamp": "1795426797000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 100.0,
+        "torque_actual": 3.174,
+        "current_actual": 2.1406
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426800000/432639": {
+        "id": 432639,
+        "timestamp": "1795426800000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 0.0,
+        "torque_actual": 3.5,
+        "current_actual": 2.30954
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426803000/432640": {
+        "id": 432640,
+        "timestamp": "1795426803000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 0.0,
+        "torque_actual": 3.5,
+        "current_actual": 2.30939
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426806000/432641": {
+        "id": 432641,
+        "timestamp": "1795426806000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 0.0,
+        "torque_actual": 3.5,
+        "current_actual": 2.30931
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426809000/432642": {
+        "id": 432642,
+        "timestamp": "1795426809000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 0.0,
+        "torque_actual": 3.5,
+        "current_actual": 2.30931
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426812000/432643": {
+        "id": 432643,
+        "timestamp": "1795426812000",
+        "status": "RUNNING",
+        "fault_code": "0",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 0.0,
+        "torque_actual": 3.5,
+        "current_actual": 2.30939
+      },
+      "sim_f07900_blocked/g120_sim_v1/point/1795426815000/432644": {
+        "id": 432644,
+        "timestamp": "1795426815000",
+        "status": "FAULT",
+        "fault_code": "F07900",
+        "control_word": "5247",
+        "speed_setpoint": 1000.0,
+        "speed_actual": 0.0,
+        "torque_actual": 0.0,
+        "current_actual": 0.0
+      }
+    },
+    "buckets": [],
+    "manual": [
+      {
+        "code": "F07900",
+        "excerpt": "Motor has been operating at the torque limit longer than the time specified in p2177 and below the speed threshold set in p2175. This…",
+        "reference": {
+          "source_type": "manual",
+          "document_number": "A5E33839529",
+          "edition": "02/2023",
+          "language": "en-US",
+          "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+          "section": "4.2",
+          "section_title": "List of faults and alarms",
+          "pdf_page": 885,
+          "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=885"
+        },
+        "applicability": "candidate_only"
+      }
+    ]
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "这段时间最近一次跳闸是怎么回事",
+    "window": {
+      "table_name": "sim_f07011_overtemp",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795402800000,
+      "end_ms": 1795427400000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "find_code_events",
+      "get_signal_metadata",
+      "summarize_telemetry",
+      "find_code_events",
+      "summarize_telemetry",
+      "query_telemetry",
+      "query_telemetry",
+      "query_telemetry",
+      "query_telemetry",
+      "lookup_drive_code",
+      "lookup_drive_code",
+      "query_telemetry",
+      "query_telemetry",
+      "search_manual",
+      "search_manual",
+      "summarize_telemetry",
+      "query_telemetry",
+      "summarize_telemetry",
+      "summarize_telemetry"
+    ],
+    "events": [
+      {
+        "arguments": {
+          "table_name": "sim_f07011_overtemp",
+          "start_ms": 1795402800000,
+          "end_ms": 1795427400000,
+          "code_field": "fault_code"
+        },
+        "read_at": "2026-11-23T17:59:33.300+08:00",
+        "count": 1,
+        "coverage": {
+          "status": "complete",
+          "points": 8200,
+          "valid_points": {
+            "fault_code": 8200
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T11:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:49:57.000+08:00"
+        },
+        "triggers": [
+          {
+            "timestamp_ms": 1795412880000,
+            "time_beijing": "2026-11-23T13:48:00.000+08:00",
+            "id": 427999
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "table_name": "sim_f07011_overtemp",
+          "start_ms": 1795402800000,
+          "end_ms": 1795427400000,
+          "code_field": "alarm_code",
+          "target_code": "A07910"
+        },
+        "read_at": "2026-11-23T17:59:36.563+08:00",
+        "count": 1,
+        "coverage": {
+          "status": "complete",
+          "points": 8200,
+          "valid_points": {
+            "alarm_code": 8200
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T11:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:49:57.000+08:00"
+        },
+        "triggers": [
+          {
+            "timestamp_ms": 1795411188000,
+            "time_beijing": "2026-11-23T13:19:48.000+08:00",
+            "id": 427435
+          }
+        ]
+      }
+    ],
+    "points": {
+      "sim_f07011_overtemp/g120_sim_v1/point/1795411185000/427434": {
+        "id": 427434,
+        "timestamp": "1795411185000",
+        "current_actual": 2.1828,
+        "motor_load_rate": 119.279,
+        "motor_temp": 129.974,
+        "fault_code": "0",
+        "alarm_code": "0"
+      },
+      "sim_f07011_overtemp/g120_sim_v1/point/1795411188000/427435": {
+        "id": 427435,
+        "timestamp": "1795411188000",
+        "current_actual": 2.18297,
+        "motor_load_rate": 119.288,
+        "motor_temp": 130.007,
+        "fault_code": "0",
+        "alarm_code": "A07910"
+      },
+      "sim_f07011_overtemp/g120_sim_v1/point/1795412877000/427998": {
+        "id": 427998,
+        "timestamp": "1795412877000",
+        "current_actual": 2.18073,
+        "motor_load_rate": 119.166,
+        "motor_temp": 144.984,
+        "fault_code": "0",
+        "alarm_code": "A07910"
+      },
+      "sim_f07011_overtemp/g120_sim_v1/point/1795412880000/427999": {
+        "id": 427999,
+        "timestamp": "1795412880000",
+        "current_actual": 0.0,
+        "motor_load_rate": 0.0,
+        "motor_temp": 145.004,
+        "fault_code": "F07011",
+        "alarm_code": "A07910"
+      }
+    },
+    "buckets": [
+      {
+        "arguments": {
+          "bucket_seconds": 1800,
+          "end_ms": 1795414680000,
+          "fields": [
+            "motor_load_rate",
+            "motor_temp"
+          ],
+          "metrics": [
+            "mean"
+          ],
+          "start_ms": 1795402080000,
+          "table_name": "sim_f07011_overtemp"
+        },
+        "buckets": [
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795402080000/1795403880000",
+            "start_beijing": "2026-11-23T10:48:00.000+08:00",
+            "end_beijing": "2026-11-23T11:18:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 57.89434100000003
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 44.53066900000003
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795403880000/1795405680000",
+            "start_beijing": "2026-11-23T11:18:00.000+08:00",
+            "end_beijing": "2026-11-23T11:48:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 57.89434100000003
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 42.91791866666672
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795405680000/1795407480000",
+            "start_beijing": "2026-11-23T11:48:00.000+08:00",
+            "end_beijing": "2026-11-23T12:18:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 74.23758933333339
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 44.23179899999999
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795407480000/1795409280000",
+            "start_beijing": "2026-11-23T12:18:00.000+08:00",
+            "end_beijing": "2026-11-23T12:48:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 119.18786666666686
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 81.80867333333322
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795409280000/1795411080000",
+            "start_beijing": "2026-11-23T12:48:00.000+08:00",
+            "end_beijing": "2026-11-23T13:18:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 119.18786666666686
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 116.5092633333335
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795411080000/1795412880000",
+            "start_beijing": "2026-11-23T13:18:00.000+08:00",
+            "end_beijing": "2026-11-23T13:48:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 119.18786666666686
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 137.55622833333322
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795412880000/1795414680000",
+            "start_beijing": "2026-11-23T13:48:00.000+08:00",
+            "end_beijing": "2026-11-23T14:18:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 0.0
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 600,
+                "invalid_points": 0,
+                "mean": 122.75837666666662
+              }
+            }
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "bucket_seconds": 60,
+          "end_ms": 1795412940000,
+          "fields": [
+            "motor_load_rate",
+            "motor_temp"
+          ],
+          "metrics": [
+            "mean"
+          ],
+          "start_ms": 1795412820000,
+          "table_name": "sim_f07011_overtemp"
+        },
+        "buckets": [
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795412820000/1795412880000",
+            "start_beijing": "2026-11-23T13:47:00.000+08:00",
+            "end_beijing": "2026-11-23T13:48:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 20,
+                "invalid_points": 0,
+                "mean": 119.15265
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 20,
+                "invalid_points": 0,
+                "mean": 144.78445
+              }
+            }
+          },
+          {
+            "ref": "sim_f07011_overtemp/g120_sim_v1/bucket/1795412880000/1795412940000",
+            "start_beijing": "2026-11-23T13:48:00.000+08:00",
+            "end_beijing": "2026-11-23T13:49:00.000+08:00",
+            "signals": {
+              "motor_load_rate": {
+                "unit": "%",
+                "valid_points": 20,
+                "invalid_points": 0,
+                "mean": 0.0
+              },
+              "motor_temp": {
+                "unit": "degC",
+                "valid_points": 20,
+                "invalid_points": 0,
+                "mean": 144.18099999999998
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "manual": [
+      {
+        "code": "F07011",
+        "excerpt": "KTY84/PT1000: The motor temperature has exceeded the fault threshold (p0605) or the timer (p0606) after the alarm threshold was exceeded (p0604) has expired. The…",
+        "reference": {
+          "source_type": "manual",
+          "document_number": "A5E33839529",
+          "edition": "02/2023",
+          "language": "en-US",
+          "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+          "section": "4.2",
+          "section_title": "List of faults and alarms",
+          "pdf_page": 870,
+          "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=870"
+        },
+        "applicability": "candidate_only"
+      },
+      {
+        "code": "A07910",
+        "excerpt": "KTY84/PT1000 or no sensor: The measured motor temperature or the temperature of the motor temperature model 2 has exceeded the alarm threshold (p0604). The…",
+        "reference": {
+          "source_type": "manual",
+          "document_number": "A5E33839529",
+          "edition": "02/2023",
+          "language": "en-US",
+          "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+          "section": "4.2",
+          "section_title": "List of faults and alarms",
+          "pdf_page": 887,
+          "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=887"
+        },
+        "applicability": "candidate_only"
+      }
+    ]
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "这段时间最近一次跳闸是怎么回事",
+    "window": {
+      "table_name": "sim_f30002_overvoltage",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795424400000,
+      "end_ms": 1795424700000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "get_signal_metadata",
+      "find_code_events",
+      "find_code_events"
+    ],
+    "events": [
+      {
+        "arguments": {
+          "table_name": "sim_f30002_overvoltage",
+          "start_ms": 1795424400000,
+          "end_ms": 1795424700000,
+          "code_field": "fault_code"
+        },
+        "read_at": "2026-11-23T17:56:10.069+08:00",
+        "count": 0,
+        "coverage": {
+          "status": "complete",
+          "points": 100,
+          "valid_points": {
+            "fault_code": 100
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:04:57.000+08:00"
+        },
+        "triggers": []
+      },
+      {
+        "arguments": {
+          "table_name": "sim_f30002_overvoltage",
+          "start_ms": 1795424400000,
+          "end_ms": 1795424700000,
+          "code_field": "alarm_code"
+        },
+        "read_at": "2026-11-23T17:56:11.922+08:00",
+        "count": 0,
+        "coverage": {
+          "status": "complete",
+          "points": 100,
+          "valid_points": {
+            "alarm_code": 100
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:04:57.000+08:00"
+        },
+        "triggers": []
+      }
+    ],
+    "points": {},
+    "buckets": [],
+    "manual": []
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "这段时间最近一次跳闸是怎么回事",
+    "window": {
+      "table_name": "sim_f07900_blocked",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795424400000,
+      "end_ms": 1795424700000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "find_code_events",
+      "get_signal_metadata",
+      "find_code_events",
+      "query_telemetry",
+      "summarize_telemetry"
+    ],
+    "events": [
+      {
+        "arguments": {
+          "table_name": "sim_f07900_blocked",
+          "start_ms": 1795424400000,
+          "end_ms": 1795424700000,
+          "code_field": "fault_code"
+        },
+        "read_at": "2026-11-23T17:56:09.921+08:00",
+        "count": 0,
+        "coverage": {
+          "status": "complete",
+          "points": 100,
+          "valid_points": {
+            "fault_code": 100
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:04:57.000+08:00"
+        },
+        "triggers": []
+      },
+      {
+        "arguments": {
+          "code_field": "alarm_code",
+          "end_ms": 1795424700000,
+          "start_ms": 1795424400000,
+          "table_name": "sim_f07900_blocked"
+        },
+        "read_at": "2026-11-23T17:56:12.428+08:00",
+        "count": 0,
+        "coverage": {
+          "status": "complete",
+          "points": 100,
+          "valid_points": {
+            "alarm_code": 100
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:04:57.000+08:00"
+        },
+        "triggers": []
+      }
+    ],
+    "points": {},
+    "buckets": [],
+    "manual": []
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "这段时间最近一次跳闸是怎么回事",
+    "window": {
+      "table_name": "sim_f07011_overtemp",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795424400000,
+      "end_ms": 1795424700000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "find_code_events",
+      "get_signal_metadata"
+    ],
+    "events": [
+      {
+        "arguments": {
+          "table_name": "sim_f07011_overtemp",
+          "start_ms": 1795424400000,
+          "end_ms": 1795424700000,
+          "code_field": "fault_code"
+        },
+        "read_at": "2026-11-23T17:56:09.724+08:00",
+        "count": 0,
+        "coverage": {
+          "status": "complete",
+          "points": 100,
+          "valid_points": {
+            "fault_code": 100
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T17:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:04:57.000+08:00"
+        },
+        "triggers": []
+      }
+    ],
+    "points": {},
+    "buckets": [],
+    "manual": []
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "今天减速时母线过压，手册列了哪些原因",
+    "window": {
+      "table_name": "sim_f30002_overvoltage",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795363200000,
+      "end_ms": 1795427400000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "search_manual",
+      "lookup_drive_code"
+    ],
+    "events": [],
+    "points": {},
+    "buckets": [],
+    "manual": [
+      {
+        "code": "F30002",
+        "excerpt": "The power unit has detected an overvoltage condition in the DC link. - motor regenerates too much energy. - line supply voltage too high.…",
+        "reference": {
+          "source_type": "manual",
+          "document_number": "A5E33839529",
+          "edition": "02/2023",
+          "language": "en-US",
+          "sha256": "d6a1e4b9728de4d577b00dd5a81af761c7f57809afbe2557791d3870054912af",
+          "section": "4.2",
+          "section_title": "List of faults and alarms",
+          "pdf_page": 905,
+          "url": "https://cache.industry.siemens.com/dl/files/919/109817919/att_1133702/v1/G120_CU240BE-2_list_man_0223_en-US.pdf#page=905"
+        },
+        "applicability": "candidate_only"
+      }
+    ],
+    "answer": "# 手册原因摘录：F30002 Power unit: DC link voltage overvoltage\n\n**来源**：SINAMICS G120 List Manual，文档号 A5E33839529，版次 02/2023，语言 en-US，section 4.2 “List of faults and alarms”\n**核实状态**：`candidate_only` —— 该候选文档的适用控制单元为 CU240B-2、CU240B-2_DP、CU240E-2、CU240E-2_DP、CU240E-2_DP_F、CU240E-2_F、CU240E-2_PN、CU240E-2_PN_F，固件为 4.7 SP14；G120_SIM 未确认控制单元与固件，因此只能作为候选手册，未经独立核验。\n\n**标题**（PDF p.904）：“Power unit: DC link voltage overvoltage”\n\n**原因原文**（PDF p.905，逐字引用）：\n> “The power unit has detected an overvoltage condition in the DC link. - motor regenerates too much energy. - line supply voltage too high.…”\n\n检索片段在第二条原因后被省略号截断，因此我只列出原文中可见的条目，不推断是否还有其它原因；完整条目请查阅 PDF p.905。\n\n- 功率单元检测到直流母线过压。\n- 电机回馈能量过多（motor regenerates too much energy）——与您描述的“减速时”过压方向一致，但这是手册列出的候选原因，不是本次故障的判定。\n- 进线电源电压过高（line supply voltage too high）。\n\n**相关：处理措施**（PDF p.905，供参考）：\n> “-increase the ramp-down time (p1121). - set the rounding times (p1130, p1136). This is particularly recommended in U/f operation to relieve the DC link…”\n\n**相关：诊断值**（PDF p.905）：\n> “Fault value (r0949, interpret decimal): DC link voltage at the time of trip [0.1 V].”\n\n## 说明\n- 本次仅查阅手册，未查询任何现场遥测或故障事件记录，因此不涉及今天的实际报码次数、跳闸时刻或母线电压峰值。\n- 是否需要我对今天 [2026-11-23 00:00:00, 17:50:00)（北京时间）的 sim_f30002_overvoltage 做实际事件统计或单次跳闸细查（含 T±30 秒电压、转矩、功率与报码对齐），请告知。"
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "今天这台设备报了几次过压",
+    "window": {
+      "table_name": "sim_f30002_overvoltage",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795363200000,
+      "end_ms": 1795427400000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [
+      "find_code_events"
+    ],
+    "events": [
+      {
+        "arguments": {
+          "table_name": "sim_f30002_overvoltage",
+          "start_ms": 1795363200000,
+          "end_ms": 1795427400000,
+          "code_field": "fault_code",
+          "target_code": "F30002"
+        },
+        "read_at": "2026-11-23T17:58:38.220+08:00",
+        "count": 36,
+        "coverage": {
+          "status": "complete",
+          "points": 21400,
+          "valid_points": {
+            "fault_code": 21400
+          },
+          "gap_count": 0,
+          "first_beijing": "2026-11-23T00:00:00.000+08:00",
+          "last_beijing": "2026-11-23T17:49:57.000+08:00"
+        },
+        "triggers": []
+      }
+    ],
+    "points": {},
+    "buckets": [],
+    "manual": []
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "今天让人上门查母线过压，收费多少？",
+    "window": {
+      "table_name": "sim_f30002_overvoltage",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795363200000,
+      "end_ms": 1795427400000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [],
+    "events": [],
+    "points": {},
+    "buckets": [],
+    "manual": [],
+    "answer": "这个问题包含两部分，我需要分开回答：\n\n**1. 上门服务收费——我无法回答**\n\n我只有 G120 模拟遥测数据和本地手册检索能力，没有任何服务报价、备件价格或服务合同系统。上门费取决于服务类型（保修内/外）、响应等级、地区差旅、设备数量等，需要向服务报价系统或当地服务伙伴询价。\n\n**2. 顺便说明：如果您想让我看今天实际有没有过压事件**\n\n我可以查 `sim_f30002_overvoltage` 源在 [2026-11-23T00:00:00.000+08:00, 2026-11-23T17:50:00.000+08:00) 的故障事件计数和直流母线电压记录。但请注意：\n- 该表名只用于选择数据源，**不能证明今天发生了过压**；\n- 这是**模拟数据**（profile `g120_sim_v1`），阈值仅限演示条件，不能当作现场设定值；\n- 现场是否过压需以实际驱动器的故障缓冲和测量为准。\n\n需要我查今天这个窗口的实际故障计数/母线电压情况吗？如果需要，我还可以同时用 `lookup_drive_code` / `search_manual` 给出 F30002 的手册原因原文（candidate_only，控制单元与固件未知）。"
+  },
+  {
+    "model": "deepseek-flash",
+    "question": "我们库房还剩几只预充电电阻？",
+    "window": {
+      "table_name": "sim_f30002_overvoltage",
+      "profile_version": "g120_sim_v1",
+      "start_ms": 1795363200000,
+      "end_ms": 1795427400000,
+      "last_seconds": null
+    },
+    "status": "completed",
+    "tools": [],
+    "events": [],
+    "points": {},
+    "buckets": [],
+    "manual": [],
+    "answer": "这是库存问题，需要查询库存系统；我这里没有库存或仓储数据的工具，因此无法回答“库房还剩几只预充电电阻”。\n\n我能做的是 G120_SIM 模拟遥测的诊断分析，例如直流母线过压（F30002）故障的事件计数、前后背景采样、手册原因检索等。如果你需要，可以把问题改成例如“今天该窗口内 F30002 报了几次”或“解释一次实际跳闸”，我再按遥测数据取证。"
+  }
+]
